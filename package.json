@@ -1,0 +1,32 @@
+{
+  "name": "geo-library",
+  "version": "1.0.0",
+  "description": "Simple library pulling together commonly used geographic functions such as distance between points, path simplification etc",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "GIS",
+    "Geo",
+    "Geographic",
+    "distance",
+    "simplify",
+    "simplification",
+    "bearing",
+    "point",
+    "line",
+    "path",
+    "position",
+    "location",
+    "bounding",
+    "box",
+    "bounding"
+  ],
+  "author": "Gordon Taylor",
+  "license": "MIT",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.1.2"
+  }
+}
