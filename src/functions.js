@@ -2,7 +2,7 @@
 
 // import required for instanceof error checking
 // import { Point } from './geo-lib-classes-beta.js';
-const Point = require ('./class-path.js').Point;
+const Point = require ('./class-point.js').Point;
 
 
 /**

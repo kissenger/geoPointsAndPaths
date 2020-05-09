@@ -21,7 +21,7 @@ class Point {
 
 
   get lng() { 
-    if (this._keyExists('lng')) {
+    if (this.paramExists('lng')) {
       return this._lng;
     } else {
       return new PointError('lng has not been set on the instance')
@@ -30,7 +30,7 @@ class Point {
   
 
   get lat() { 
-    if (this._keyExists('lat')) {
+    if (this.paramExists('lat')) {
       return this._lat;
     } else {
       return new PointError('lat has not been set on the instance')
@@ -52,7 +52,7 @@ class Point {
 
   addParams(params) {
     Object.keys(params).forEach( key => {
-      if (!this._keyExists(key)) {
+      if (!this.paramExists(key)) {
         this['_' + key] = params[key];
       }
     });
@@ -73,11 +73,15 @@ class Point {
     const args = arguments[0] instanceof Array ? arguments[0] : [...arguments];
     const result = {};
     args.forEach( key => {
-      if (this._keyExists(key)) {
+      if (this.paramExists(key)) {
         result[key] = this['_' + key];
       }
     })
     return result;
+  }
+
+  paramExists(key) {
+    return this.hasOwnProperty('_' + key)
   }
 
 
@@ -111,10 +115,6 @@ class Point {
     if (value < -180 || value > 180) {
       throw new PointError('Lng value out of bounds');
     }
-  }
-
-  _keyExists(key) {
-    return this.hasOwnProperty('_' + key)
   }
 
   _keyIsLatOrLng(key) {

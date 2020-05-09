@@ -10,14 +10,14 @@ class BoundingBox {
    * @param {Array[Point]} pointsArray
    * @memberof BoundingBox
    */
-  constructor(arrayOfPoints) {
+  constructor(points) {
 
-    this.bbox = arrayOfPoints.reduce( (b, p) => {
-      minLng = p.lng < b.minLng ? p.lng : b.minLng;
-      maxLng = p.lng > b.maxLng ? p.lng : b.maxLng;
-      minLat = p.lat < b.minLat ? p.lat : b.minLat;
-      maxLat = p.lat > b.maxLat ? p.lat : b.maxLat;
-    }, { minLng: 180, minLat: 90, maxLng: -180, maxLat: -90 });
+    this._boundingBox = points.reduce( (bbox, point) => (
+      {minLng: point.lng < bbox.minLng ? point.lng : bbox.minLng,
+      maxLng: point.lng > bbox.maxLng ? point.lng : bbox.maxLng,
+      minLat: point.lat < bbox.minLat ? point.lat : bbox.minLat,
+      maxLat: point.lat > bbox.maxLat ? point.lat : bbox.maxLat}
+    ), { minLng: 180, minLat: 90, maxLng: -180, maxLat: -90 });
 
   }
 
@@ -59,4 +59,8 @@ function outerBoundingBox(arrayOfBboxes) {
 
   // and instantiate an new Bounding box with the result
   return new BoundingBox(pointsArr);
+}
+
+module.exports = {
+  BoundingBox
 }

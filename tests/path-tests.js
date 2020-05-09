@@ -6,6 +6,7 @@
 const expect = require('chai').expect;
 const Point = require('../src/class-point').Point;
 const Path = require('../src/class-path').Path;
+const BoundingBox = require('../src/class-bbox').BoundingBox;
 const PathError = require('../src/class-path').PathError;
 
 // some param strings for reference
@@ -35,14 +36,15 @@ const coords = [
   {"lat":51.21769,"lng":-3.95615}
 ];
 
+const points = coords.map( c => new Point(c));
+const elevs = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ];
+
 /**
  * Path Instantiation
  */
 describe(`Correctly instantiating Path`, function() {
 
   describe(`Instantiating a path`, function() {
-
-    const points = coords.map( c => new Point(c));
 
     it('should return an instance of Path when initialised with two points', function() {
       expect(new Path(points.slice(0,2))).to.satisfy(function(r) { return r instanceof Path});
@@ -75,8 +77,8 @@ describe(`Correctly instantiating Path`, function() {
 
     it('should return an instance of PathError if any element in array is not a point', function() {
       try {
-        const points = coords.map( c => new Point(c));
-        points.push({"lat":51.21769,"lng":-3.95615});
+        const newPoints = [...points];
+        newPoints.push({"lat":51.21769,"lng":-3.95615});
         new Path(points);
       } catch (err) {
         expect(err).to.satisfy(function(r) { return r instanceof PathError});
@@ -85,93 +87,119 @@ describe(`Correctly instantiating Path`, function() {
 
     it('should return an instance of PathError if passed only a single point', function() {
       try {
-        const points = coords.map( c => new Point(c));
         new Path(points.slice(0,1));
       } catch (err) {
         expect(err).to.satisfy(function(r) { return r instanceof PathError});
       }
     })
 
+    it('should return an instance of PathError if no argument is passed', function() {
+      try {
+        new Path();
+      } catch (err) {
+        expect(err).to.satisfy(function(r) { return r instanceof PathError});
+      }
+    })
   });
 
 });
 
-  // describe(`Using param array including other parameters`, function() {
-  //   const params = {"lat":51.2194,"lng":-3.94915, "elev": 50, "HR": 136, "Cadence": 95};
-  //   const point = new Point(params);
-  //   const paramsKeys = Object.keys(params);
-  //   const expectedPointKeys = Object.keys(point).map(key => key.substring(1));
+
+/**
+ * Path Methods
+ */
+
+describe(`Test Path methods`, function() {
+
+  describe(`Add param to points`, function() {
+
+
+    it('should have elev on each point in path', function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
+      expect(path).to.satisfy(function(result) { return result._points.every(p => p.hasOwnProperty('_elev'))  } ); 
+    });
+
     
-  //   it('should return instance of Point', function() {
-  //     expect(point).to.satisfy(function(r) { return r instanceof Point});
-  //   });
+    it('param name can have spaces', function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);      
+      path.addParamToPoints('elev gain', elevs);
+      expect(path).to.satisfy(function(result) { return result._points.every(p => p.hasOwnProperty('_elev gain'))  } ); 
+    });
 
-  //   it('should have all the expected keys', function() {
-  //     expect(expectedPointKeys).deep.equal(paramsKeys);
-  //   });
-  
-  // })
-
-
-  // describe(`Instantiating an empty instance `, function() {
-
-  //   const point = new Point();
     
-  //   it('should return instance of Point', function() {
-  //     expect(point).to.satisfy(function(r) { return r instanceof Point});
-  //   });
-  
-  // })
-
-
-  // describe(`Check error returns for incorrectly instantiating a Point`, function() {
-
-  //   it('should return an instance of PointError if keys do not contain lng is not passed', function() {
-  //     try {
-  //       point = new Point({lat:51.2194,"lon":-3.94915});
-  //     } catch (err) {
-  //       expect(err).to.satisfy(function(r) { return r instanceof PointError});
-  //     }
-  //   });
-
-  //   it('should return an instance of PointError if keys do not contain lat is not passed', function() {
-  //     try {
-  //       point = new Point({"lng":-3.94915});
-  //     } catch (err) {
-  //       expect(err).to.satisfy(function(r) { return r instanceof PointError});
-  //     }
-  //   });
-
-  //   it('should return an instance of PointError if lng is not a valid value', function() {
-  //     try {
-  //       point = new Point({"lat":51.2194,"lng":-320.94915});
-  //     } catch (err) {
-  //       expect(err).to.satisfy(function(r) { return r instanceof PointError});
-  //     }
-  //   });
-
-  //   it('should return an instance of PointError if lng is not a valid type', function() {
-  //     try {
-  //       point = new Point({"lat":51.2194,"lng":'cheese'});
-  //     } catch (err) {
-  //       expect(err).to.satisfy(function(r) { return r instanceof PointError});
-  //     }
-  //   });
-
-  //   it('should return an instance of PointError if lat is not a valid value', function() {
-  //     try {
-  //       point = new Point({"lat":91.2194,"lng":-3.94915});
-  //     } catch (err) {
-  //       expect(err).to.satisfy(function(r) { return r instanceof PointError});
-  //     }
-  //   });
-
-  //   it('should return an instance of PointError if lat is not a valid type', function() {
-  //     try {
-  //       point = new Point({"lat":true,"lng":-3.94915});
-  //     } catch (err) {
-  //       expect(err).to.satisfy(function(r) { return r instanceof PointError});
-  //     }
-  //   });
+    it('should ignore attempt to add duplicate parameter', function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev gain', elevs.map(e => e*2));
+      expect(path.getParamFromPoints('elev')).to.deep.equal(elevs);
+    });
     
-  // });
+    
+    it('should return an instance of PathError if array is not the correct length', function() {
+      const path = new Path(points);
+      const newElevs = [...elevs, 1,2,3];
+      try {
+        path.addParamToPoints('elev', newElevs);
+      } catch (err) {
+        expect(err).to.satisfy(function(r) { return r instanceof PathError});
+      }
+    })
+
+  })
+
+
+  describe(`Get param from points`, function() {
+
+    const path = new Path(points);
+    path.addParamToPoints('elev', elevs);
+    it('should have elev on each point in path', function() {
+      expect(path.getParamFromPoints('elev')).to.deep.equal(elevs);
+    });
+
+
+    const newPath = new Path([
+      new Point({"lat":51.2194,"lng":-3.94915,"beer": 'peroni'}),
+      new Point({"lat":51.21932,"lng":-3.94935}),
+      new Point({"lat":51.21919,"lng":-3.94989,"beer": 'peroni'}),
+      new Point({"lat":51.21905,"lng":-3.95032,"beer": 'peroni'})
+    ]);
+    it('should return null for any point without the desired paramater', function() {
+      expect(newPath.getParamFromPoints('beer')).to.deep.equal(['peroni', null, 'peroni', 'peroni']);
+    });
+
+  })
+
+
+  describe(`Test getters`, function() {
+
+    it('get lngLats should produce the expected result', function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
+      expect(path.lngLats).to.deep.equal(points.map(p=>[p.lng, p.lat]));
+    });
+
+    it('get length should produce the expected result', function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
+      expect(path.length).to.deep.equal(points.length);
+    });
+
+    it('get bbox should produce the expected result', function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
+      expect(path.boundingBox).to.satisfy(function(r) { return r instanceof BoundingBox});
+    });
+
+    it('get total Distance should produce the expected result', function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
+      console.log(`distance = ${path.distance}`);
+      expect(path.distance).to.satisfy(function(r) { return r instanceof BoundingBox});
+    });
+
+
+  })
+
+
+});
