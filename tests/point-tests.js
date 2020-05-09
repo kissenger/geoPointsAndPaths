@@ -4,8 +4,8 @@
  */
 
 const expect = require('chai').expect;
-const Point = require('../src/classes').Point;
-const PointError = require('../src/classes').PointError;
+const Point = require('../src/class-point').Point;
+const PointError = require('../src/class-point').PointError;
 
 // some param strings for reference
 // {"lat":51.2194,"lng":-3.94915}
@@ -39,7 +39,9 @@ describe(`Correctly instantiating Point`, function() {
     it('should not throw error if instantiated with number-like string', function() {
       expect(new Point({"lat":"51.2194","lng":'-3.94915'})).to.satisfy(function(r) { return r instanceof Point});
     });
+
   })
+
 
   describe(`Using param array including other parameters`, function() {
 
@@ -119,6 +121,23 @@ describe(`Correctly instantiating Point`, function() {
         expect(err).to.satisfy(function(r) { return r instanceof PointError});
       }
     });
+
+    it('should not throw error if empty array is passed', function() {
+      try {
+        point = new Point([]);
+      } catch (err) {      
+        expect(err).to.satisfy(function(r) { return r instanceof PointError});
+      }
+    });
+
+    it('should not throw error if empty object is passed', function() {
+      try {
+        point = new Point({});
+      } catch (err) {      
+        expect(err).to.satisfy(function(r) { return r instanceof PointError});
+      }
+    });
+
     
   });
 });
