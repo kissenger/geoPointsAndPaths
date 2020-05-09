@@ -14,7 +14,7 @@ const geoFunctions = require('./functions.js');
 class Point {
 
   constructor(params) {
-    if (params !== undefined) {
+    if (params) {
       this._checkForValidLatAndLng(params);
       this.addParams(params);
     }
@@ -22,12 +22,20 @@ class Point {
 
 
   get lng() { 
-    return this._lng; 
+    if (this._keyExists('lng')) {
+      return this._lng;
+    } else {
+      return new PointError('lng has not been set on the instance')
+    }
   }
   
 
   get lat() { 
-    return this._lat; 
+    if (this._keyExists('lat')) {
+      return this._lat;
+    } else {
+      return new PointError('lat has not been set on the instance')
+    }
   }
 
 
@@ -75,7 +83,6 @@ class Point {
 
 
   _checkForValidLatAndLng(params) {
-    console.log(params);
     const keys = Object.keys(params);
     this._checkForLngKey(keys);
     this._checkForLatKey(keys);
@@ -85,30 +92,30 @@ class Point {
 
   _checkForLatKey(keys) {
     if ( keys.indexOf('lat') < 0 ) {
-      throw new Error('Lat parameter missing but required to instantiate Point with parameters');
+      throw new PointError('Lat parameter missing but required to instantiate Point with parameters');
     }
   }
 
   _checkForLngKey(keys) {
     if ( keys.indexOf('lng') < 0 ) {
-      throw new Error('Lng parameter missing but required to instantiate Point with parameters');
+      throw new PointError('Lng parameter missing but required to instantiate Point with parameters');
     }
   }
 
   _checkLatValue(value) {
     if (value < -90 || value > 90) {
-      throw new Error('Lat value out of bounds');
+      throw new PointError('Lat value out of bounds');
     };
   }
 
   _checkLngValue(value) {
     if (value < -180 || value > 180) {
-      throw new Error('Lng value out of bounds');
+      throw new PointError('Lng value out of bounds');
     }
   }
 
   _keyExists(key) {
-    return !!this['_' + key];
+    return this.hasOwnProperty('_' + key)
   }
 
   _keyIsLatOrLng(key) {
@@ -118,6 +125,8 @@ class Point {
 
 };
 
+class PointError extends Error{};
+class PathError extends Error{};
 
 /**************************************************************************************
  *
@@ -252,5 +261,5 @@ function outerBoundingBox(arrayOfBboxes) {
 }
 
 module.exports = {
-  Path, Point, BoundingBox, outerBoundingBox
+  Path, Point, BoundingBox, outerBoundingBox, PointError, PathError
 }
