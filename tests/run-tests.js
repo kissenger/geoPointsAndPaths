@@ -6,3 +6,7 @@ describe('Path Tests', function () {
 describe('Point Tests', function () {
   require('./point-tests');
 });
+
+describe('Function Tests', function () {
+  require('./functions-tests');
+});

@@ -21,9 +21,10 @@ const Point = require('../src/class-point').Point; // for instance checking
  */
 function p2p(p1, p2) {
 
-  if ( ! p1 instanceof Point && p2 instanceof Point ) {
-    throw new Error(`p2p argument not an instance of Point class`);
-  };
+  // type checking removed for testing
+  // if ( ! (p1 instanceof Point && p2 instanceof Point) ) {
+  //   throw new Error(`p2p argument not an instance of Point class`);
+  // };
 
   const lat1 = degs2rads(p1.lat);
   const lat2 = degs2rads(p2.lat);
@@ -50,9 +51,10 @@ function p2p(p1, p2) {
 */
 function p2l(p1, p2, p3) {
 
-  if ( !(p1 instanceof Point && p2 instanceof Point && p3 instanceof Point)) {
-    throw new Error(`p2l argument not an instance of Point class`);
-  }
+  // type checking removed for testing
+  // if ( !(p1 instanceof Point && p2 instanceof Point && p3 instanceof Point)) {
+  //   throw new Error(`p2l argument not an instance of Point class`);
+  // }
 
   const d13 = p2p(p1, p3) / 1000.0;
   const brg12 = bearing(p1, p2);
@@ -72,9 +74,10 @@ function p2l(p1, p2, p3) {
  */
 function bearing(p1, p2) {
 
-  if ( !(p1 instanceof Point && p2 instanceof Point) ) {
-    throw new Error(`bearing argument not an instance of Point class`);
-  }
+  // type checking removed for testing
+  // if ( !(p1 instanceof Point && p2 instanceof Point) ) {
+  //   throw new Error(`bearing argument not an instance of Point class`);
+  // }
 
   const lat1 = degs2rads(p1.lat);
   const lat2 = degs2rads(p2.lat);
@@ -117,5 +120,5 @@ function degs2rads(degs) {
 };
 
 module.exports = {
-  simplify, p2p
+  simplify, p2p, p2l, bearing
 }

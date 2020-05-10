@@ -5,7 +5,6 @@ const BoundingBox = require('./class-bbox.js').BoundingBox;
 
 /**
  * Instantiated with an array of two or more Point instances - will throw error otherwise
- * 
  */
 class Path{
 
@@ -14,6 +13,9 @@ class Path{
     this._points = pointsArray;
   }
 
+  /**
+   * Getters and Setters
+   */
   
   get lngLats() {
     return this._points.map(p => [p.lng, p.lat]);
@@ -40,6 +42,9 @@ class Path{
     return this._points.map( (_, i) => deltaDistance.slice(0, i + 1).reduce( (sum, d) => sum + d, 0) );
   }
 
+  /**
+   * Public class methods
+   */
 
   addParamToPoints(paramName, valueArray) {
     this._checkParamArrayLength(valueArray);
@@ -68,6 +73,10 @@ class Path{
     return this._points[index];
   }
 
+
+  /**
+   * Private class methods
+   */
 
   _checkForValidInput(pointsArray) {
     this._checkIsAnArray(pointsArray);

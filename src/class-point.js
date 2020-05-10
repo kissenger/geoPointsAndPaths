@@ -19,6 +19,9 @@ class Point {
     }
   }
 
+  /**
+   * Getters and Setters
+   */
 
   get lng() { 
     this
@@ -50,6 +53,9 @@ class Point {
     this._lat = value; 
   }
 
+  /**
+   * Public class methods
+   */
 
   addParams(params) {
     Object.keys(params).forEach( key => {
@@ -81,10 +87,14 @@ class Point {
     return result;
   }
 
+
   paramExists(key) {
     return this.hasOwnProperty('_' + key)
   }
 
+  /**
+   * Private class methods
+   */
 
   _checkForValidLatAndLng(params) {
     const keys = Object.keys(params);
@@ -94,11 +104,13 @@ class Point {
     this._checkLngValue(params.lng); 
   }
 
+
   _checkForLatKey(keys) {
     if ( keys.indexOf('lat') < 0 ) {
       throw new PointError('Lat parameter missing but required to instantiate Point with parameters');
     }
   }
+
 
   _checkForLngKey(keys) {
     if ( keys.indexOf('lng') < 0 ) {
@@ -106,17 +118,20 @@ class Point {
     }
   }
 
+
   _checkLatValue(value) {
     if (value < -90 || value > 90) {
       throw new PointError('Lat value out of bounds');
     };
   }
 
+
   _checkLngValue(value) {
     if (value < -180 || value > 180) {
       throw new PointError('Lng value out of bounds');
     }
   }
+
 
   _keyIsLatOrLng(key) {
     return key === 'lat' || key === 'lng';
@@ -125,7 +140,9 @@ class Point {
 
 };
 
+
 class PointError extends Error{};
+
 
 module.exports = {
   Point, PointError

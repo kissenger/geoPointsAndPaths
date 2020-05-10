@@ -1,17 +1,21 @@
+/**
+ * Geo functions
+ * See https://www.movable-type.co.uk/scripts/latlong.html as a useful reference
+ * All functions accept Point instance or Point-like object, eg {"lat":51.2194,"lng":-3.8467}
+ */
 
-const Point = require ('./class-point.js').Point;
+const Point = require ('./class-point.js').Point; // only needed for instance checking
 
 /**
  * Uses Haversine to return distance in metres btwn 2 coordinates https://en.wikipedia.org/wiki/Haversine_formula
  * Vincenty's formula is more accurate but more expensive https://en.wikipedia.org/wiki/Vincenty's_formulae
- * See also https://www.movable-type.co.uk/scripts/latlong.html
  * @param {Point} p1 as instance of point class
  * @param {Point} p2 as instance of point class
  * @returns {number} distance between provided points in metres
  */
 function p2p(p1, p2) {
 
-  checkIsAllPoints(p1, p2);
+  checkInputs(p1, p2);
 
   const lat1 = degs2rads(p1.lat);
   const lat2 = degs2rads(p2.lat);
@@ -31,14 +35,13 @@ function p2p(p1, p2) {
 
 /**
 * Returns distance in meters between a line (defined by p1 and p2) and a point (p3)
-* See https://www.movable-type.co.uk/scripts/latlong.html
 * @param {Point} p1 lng/lat of line start in decimal degrees as instance of Point class
 * @param {Point} p2 lng/lat of line end in decimal degrees as instance of Point class
 * @param {Point} p3 lng/lat of mid-point in decimal degrees as instance of Point class
 */
 function p2l(p1, p2, p3) {
 
-  checkIsAllPoints(p1, p2, p3);
+  checkInputs(p1, p2, p3);
 
   const d13 = p2p(p1, p3) / 1000.0;
   const brg12 = bearing(p1, p2);
@@ -51,14 +54,14 @@ function p2l(p1, p2, p3) {
 
 /**
  * Returns bearing in radians between two points
- * See https://www.movable-type.co.uk/scripts/latlong.html
  * @param {Point} p1 start point
  * @param {Point} p2 end point
  * @returns bearing in between two points in RADIANS
+ * NOTE returns 0 (ie North) is two identical points are entered - TODO: does this case need to be handled?
  */
 function bearing(p1, p2) {
 
-  checkIsAllPoints(p1, p2);
+  checkInputs(p1, p2);
 
   const lat1 = degs2rads(p1.lat);
   const lat2 = degs2rads(p2.lat);
@@ -82,7 +85,7 @@ function bearing(p1, p2) {
  */
 function simplifyPath(points, tolerance) {
 
-  checkInputs(points, tolerance);
+  checkIsNumber(tolerance);
 
   const pointsToKeep = Array.from(points, (_, i) => i);
   let pointsWereDeleted = true;
@@ -102,33 +105,6 @@ function simplifyPath(points, tolerance) {
 
 }
 
-// export function simplify(points, TOLERANCE) {
-
-//   // j is an array of indexes - the index of removed points are removed from this array
-//   const j = Array.from(points, (_, i) => i)
-//   let flag = true;
-//   let i;
-
-//   while (flag) {
-//     i = 0;
-//     flag = false;   // if remains false then simplification is complete; loop will break
-//     while ( i < ( j.length - 2 ) ) {
-//       const pd = p2l( points[j[i]], points[j[i+2]], points[j[i+1]] );
-//       if ( Math.abs(pd) < TOLERANCE ) {
-//         j.splice(i + 1, 1); // delete a point
-//         flag = true;
-//       }
-//       i++;
-//     }
-//   }
-
-//   return j.map( x => points[x] );
-
-// }
-
-function checkInputs(points, tol) {
-  checkIsNumber(tol);
-}
 
 function checkIsNumber(value) {
   if ( isNaN(value) ) {
@@ -137,21 +113,37 @@ function checkIsNumber(value) {
 }
 
 function degs2rads(degs) {
-  return degs * 0.0174532925199; //0.0174... = Pi/180
+  return degs * 0.01745329251994329576; //0.0174... = Pi/180
+  
 };
 
 
-function checkIsAllPoints() {
+function checkInputs() {
   const args = arguments[0] instanceof Array ? arguments[0] : [...arguments];
-  args.forEach(arg => {
-    if (!arg instanceof Point) {
-      throw new GeoFunctionsError('argument not an instance of Point class');
+  if (!args.every(arg => isPointOrPointLike(arg))) {
+    throw new GeoFunctionsError('Argument not a Point or Point-like object');
+  }
+}
+
+
+function isPointOrPointLike(variable) {
+
+  if (variable instanceof Point) {
+    return true;
+  }
+
+  if (variable instanceof Object) {
+    if (variable.hasOwnProperty('lat') && variable.hasOwnProperty('lng')){
+      return true;
     }
-  })
+  }
+
+  return false;
 }
 
 
 class GeoFunctionsError extends Error{};
+
 
 module.exports = {
   p2p, p2l, bearing, simplifyPath, GeoFunctionsError
