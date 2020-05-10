@@ -21,6 +21,7 @@ class Point {
 
 
   get lng() { 
+    this
     if (this.paramExists('lng')) {
       return this._lng;
     } else {

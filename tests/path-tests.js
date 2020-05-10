@@ -8,6 +8,8 @@ const Point = require('../src/class-point').Point;
 const Path = require('../src/class-path').Path;
 const BoundingBox = require('../src/class-bbox').BoundingBox;
 const PathError = require('../src/class-path').PathError;
+const GeoFunctionsError = require('../src/functions').GeoFunctionsError;
+const compareFuncs = require('./compare-funcs');
 
 // some param strings for reference
 // {"lat":51.2194,"lng":-3.94915}
@@ -170,36 +172,112 @@ describe(`Test Path methods`, function() {
 
   })
 
+  describe(`Get point`, function() {
 
-  describe(`Test getters`, function() {
-
-    it('get lngLats should produce the expected result', function() {
-      const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
-      expect(path.lngLats).to.deep.equal(points.map(p=>[p.lng, p.lat]));
+    const path = new Path(points);
+    path.addParamToPoints('elev', elevs);
+    it('get a point from path should return requested point', function() {
+      expect(path.getPoint(5)).to.deep.equal(points[5]);
     });
 
-    it('get length should produce the expected result', function() {
-      const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
-      expect(path.length).to.deep.equal(points.length);
-    });
-
-    it('get bbox should produce the expected result', function() {
-      const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
-      expect(path.boundingBox).to.satisfy(function(r) { return r instanceof BoundingBox});
-    });
-
-    it('get total Distance should produce the expected result', function() {
-      const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
-      console.log(`distance = ${path.distance}`);
-      expect(path.distance).to.satisfy(function(r) { return r instanceof BoundingBox});
-    });
-
+    it('should return an instance of PathError if index is out of range', function() {
+      try {
+        path.getPoint(50);
+      } catch (err) {
+        expect(err).to.satisfy(function(r) { return r instanceof PathError});
+      }
+    })
 
   })
 
 
-});
+  describe(`Using simplify as a method on Path instance`, function() {
+
+    // simplify using Path instance
+
+
+    // simplify using comparason function
+    // const expectedOutput = compareFuncs.simplify(points, 5);
+
+    it('expected output for tol=0 (no simplify)', function() {
+      const path = new Path(points);
+      path.simplify(0);
+      const pathPoints = [];
+      for (let i = 0; i < path.length; i++) {
+        pathPoints.push(path.getPoint(i));
+      }
+
+      expect(pathPoints).to.deep.equal(points);
+    });
+
+    it('expected output for tol=5', function() {
+      // simplify using Path instance
+      const path = new Path(points);
+      path.simplify(5);
+      const pathPoints = [];
+      for (let i = 0; i < path.length; i++) {
+        pathPoints.push(path.getPoint(i));
+      }
+
+      // simplify using comparason function
+      const expectedOutput = compareFuncs.simplify(points, 5);
+
+      expect(pathPoints).to.deep.equal(expectedOutput);
+    });    
+
+    it('return error if tolerance is not a number', function() {
+      try {
+        const path = new Path(points);
+        path.simplify('house');
+      } catch (err) {
+        expect(err).to.satisfy(function(r) { return r instanceof GeoFunctionsError});
+      }
+
+    });
+
+  })
+
+})
+
+
+describe(`Test getters`, function() {
+
+  it('get lngLats should produce the expected result', function() {
+    const path = new Path(points);
+    path.addParamToPoints('elev', elevs);
+    expect(path.lngLats).to.deep.equal(points.map(p=>[p.lng, p.lat]));
+  });
+
+  it('get length should produce the expected result', function() {
+    const path = new Path(points);
+    path.addParamToPoints('elev', elevs);
+    expect(path.length).to.deep.equal(points.length);
+  });
+
+  it('get bbox should produce the expected result', function() {
+    const path = new Path(points);
+    path.addParamToPoints('elev', elevs);
+    expect(path.boundingBox).to.satisfy(function(r) { return r instanceof BoundingBox});
+  });
+
+  it('get total Distance should produce the expected result', function() {
+    const path = new Path(points);
+    path.addParamToPoints('elev', elevs);
+    const expectedDistance = points.reduce( (d, _, i) => i === 0 ? 0 : d + compareFuncs.p2p(points[i] , points[i-1]), 0);
+    expect(path.distance.toFixed(4)).to.equal(expectedDistance.toFixed(4));
+  });
+
+  it('get cumDistance should produce the expected result', function() {
+    const path = new Path(points);
+    const expectedResult = [0];
+    points.forEach( (_, i) => {
+      if (i>0) {
+        expectedResult.push(expectedResult[expectedResult.length-1] + compareFuncs.p2p(points[i], points[i-1]));
+      }
+    })
+    expect(path.cumulativeDistance.map(d=>d.toFixed(6))).to.deep.equal(expectedResult.map(d=>d.toFixed(6)));
+  });
+
+
+})
+

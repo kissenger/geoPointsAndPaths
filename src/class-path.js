@@ -1,5 +1,5 @@
 "use strict"
-const geoFunctions = require('./functions.js');
+const geoFun = require('./functions.js');
 const Point = require('./class-point.js').Point;
 const BoundingBox = require('./class-bbox.js').BoundingBox;
 
@@ -10,41 +10,8 @@ const BoundingBox = require('./class-bbox.js').BoundingBox;
 class Path{
 
   constructor(pointsArray) {
-
     this._checkForValidInput(pointsArray);
     this._points = pointsArray;
-
-  }
-
-  _checkForValidInput(pointsArray) {
-    this._checkIsAnArray(pointsArray);
-    this._checkAllElementsArePoints(pointsArray);
-    this._checkTwoOrMorePoints(pointsArray);
-  }
-
-  _checkIsAnArray(thing) {
-    if (! (thing instanceof Array)) {
-      throw new PathError('Input not an array');
-    }
-  }
-
-  _checkAllElementsArePoints(arr) {
-    if (!arr.every( point => point instanceof Point)) {
-      throw new PathError('Array of Point instances expected to initialise');
-    }
-  }
-
-  _checkTwoOrMorePoints(arr) {
-    if (!arr.length > 1) {
-      throw new PathError('Need two or more points to instantiate a Path');
-    }
-  }
-
-
-  _checkParamArrayLength(array) {
-    if ( array.length !== this._points.length) {
-      throw new PathError(`Parameter array of length ${array.length} cannot be added to instance of ${this._points.length} points`);
-    };
   }
 
   
@@ -62,8 +29,15 @@ class Path{
     return new BoundingBox(this._points);
   }
 
+
   get distance() {
-    return this._points.reduce( (d, _, i) => i === 0 ? 0 : d + geoFunctions.p2p(this._points[i] , this._points[i-1]), 0);
+    return this._points.reduce( (d, _, i) => i === 0 ? 0 : d + geoFun.p2p(this._points[i] , this._points[i-1]), 0);
+  }
+  
+
+  get cumulativeDistance() {
+    const deltaDistance = this._points.map( (_, i, pts) => i === 0 ? 0 : geoFun.p2p(pts[i], pts[i-1]) );
+    return this._points.map( (_, i) => deltaDistance.slice(0, i + 1).reduce( (sum, d) => sum + d, 0) );
   }
 
 
@@ -83,23 +57,58 @@ class Path{
     })
   }
 
-  // simplify(tol) {
-  //   this.points = geoFunctions.simplify(this.points, tol);
-  // }
+
+  simplify(tol) {
+    this._points = geoFun.simplifyPath(this._points, tol);
+  }
 
 
-  // get cumDistance() {
-  //   if (!this.dDistance) { this.dDistance = this.deltaDistance(); }
-  //   return this.points.map( (_, i) => this.dDistance.slice(0, i + 1).reduce( (sum, d) => sum + d, 0) );
-  // }
+  getPoint(index) {
+    this._checkPointExists(index);
+    return this._points[index];
+  }
 
 
-  // get deltaDistance() {
-  //   return this.points.map( (_, i, pts) => i === 0 ? 0 : geoFunctions.p2p(pts[i], pts[i-1]) );
-  // }
+  _checkForValidInput(pointsArray) {
+    this._checkIsAnArray(pointsArray);
+    this._checkAllElementsArePoints(pointsArray);
+    this._checkTwoOrMorePoints(pointsArray);
+  }
 
 
+  _checkIsAnArray(thing) {
+    if (! (thing instanceof Array)) {
+      throw new PathError('Input not an array');
+    }
+  }
 
+
+  _checkAllElementsArePoints(arr) {
+    if (!arr.every( point => point instanceof Point)) {
+      throw new PathError('Array of Point instances expected to initialise');
+    }
+  }
+
+
+  _checkTwoOrMorePoints(arr) {
+    if (!arr.length > 1) {
+      throw new PathError('Need two or more points to instantiate a Path');
+    }
+  }
+
+
+  _checkParamArrayLength(array) {
+    if ( array.length !== this._points.length) {
+      throw new PathError(`Parameter array of length ${array.length} cannot be added to instance of ${this._points.length} points`);
+    };
+  }
+
+
+  _checkPointExists(index) {
+    if ( !this._points[index] ) {
+      throw new PathError(`Requested point at index ${index} does not exist`);
+    }
+  }
 
 } 
 
