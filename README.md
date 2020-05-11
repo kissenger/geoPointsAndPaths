@@ -1,23 +1,48 @@
 # geoPointsAndPaths
 Library for storing and manipulating coordinate data as Points and Paths, with common methods including path simplification, point to point distance etc.  Any number of named parameters (such as 'elevation') can be associated with each point.  Distance calculations between points are based on Haversine - there are more accurate, slower, methods available and any number of nom libraries to calculate them.
 
+Features of Point class:
 <ul>
-  <li> Point: Store any number of named paramaters on each point </li>
-  <li> Point: Simple get methods to access lat/lng and any named parameter </li>
-  <li> Path: Associate any number of points as a path </li>
-  <li> Path: Has access to methods such as 'simplify'; as params are associated with each point it makes handling simplified paths very easy </li>
+  <li> Store any number of named paramaters on each point </li>
+  <li> Simple get methods to access lat/lng and any named parameter </li>
+</ul>
+
+Features of Path class:
+<ul>
+  <li> Associate any number of points as a path </li>
+  <li> Any number of parameters can be associated to the path; params are stored on each Point instance
+  <li> Has access to methods such as 'simplify'; as params are associated with each point it makes handling simplified paths very easy </li>
+  <li> Access derived properties such as cumulative distance and delta distance, as well as total distance </li>
+  <li> Tracks whether it has been simplified and stores the compression ratio </li>
+</ul>
+
+GeoFunctions:
+<ul>
   <li> p2p: point to point distance between two provdied points </li>
   <li> p2l: shortest distance from great circle line connecting two points, to a third point</li>
   <li> bearing: compass bearing between two provided points </li>
+  <li> boundingBox: return lat and lng bounds for a supplied array of points </li>
+  <li> bearingAsCardinal: compass bearing between two provided points as compass cardinal, eg North to South</li>
+  <li> simplify: simplifies an array of points given a tolerance using the perpendicular distance method</li>
 </ul>
 
 
-# Point Class
+# Imparting the classes and functions#
 
-Import the library.
+Import the classes and functions
 <pre>
-const Point = require('geolib').Point;
+// CommonJS
+const Point = require('geo-points-and-paths').Point;
+const Path = require('geo-points-and-paths').Path;
+const geoFunctions = require('geo-points-and-paths').geoFunctions;
+
+// ES Modules
+import geolib from 'geo-points-and-paths';
+const {Point, Path, geoFunctions} = geolib;
 </pre>
+
+
+# Point Class
 
 You can instantiate a Point in two ways.  First option is to provide a list of paramaters, which must include 'lat' and 'lng' or will throw an error:
 
@@ -73,12 +98,6 @@ console.log(point.getParams(['lat', 'lng']));          // { lat: 52.12345, lng: 
 </pre>
 
 ## Path Class
-
-Import the library.
-<pre>
-const Path = require('../index').Path;
-const Point = require('../index').Point;
-</pre>
 
 Define an array of Point instances along with some parameter arrays for future use:
 <pre>
@@ -170,12 +189,6 @@ path.simplify(3);                       // parameter is the distance in m from l
 
 ## Access geoFunctions directly
 
-The following standalone functions are provided.  First require the library:
-<pre>
-const geoFunctions = require('../index').geoFunctions;
-const Point = require('../index').Point;
-</pre>
-
 All geoFunctions will take Points or Point-like objects of the form {"lat":xxx, "lng":xxx}:
 <pre>
 const p1 = new Point({"lat":51.2194,"lng":-3.94915});
@@ -198,6 +211,11 @@ Bearing between two points:
 const bearingInRADS = geoFunctions.bearing(p1, p3)
 console.log(bearingInRADS);                          // -0.31198169868786196 in RADIANS
 console.log(geoFunctions.rads2degs(bearingInRADS));  // -17.875234620136624 in DEGREES
+</pre>
+
+Bearing between two points and compass cardinal (input in RADIANS):
+<pre>
+console.log(geoFunctions.bearingAsCardinal(3.14));  // {from: 'North', to: 'South}
 </pre>
 
 Convert degrees to radians and radians to degrees:
