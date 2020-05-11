@@ -167,3 +167,92 @@ console.log(path.simplificationRatio);  // simplification ratio (simplified leng
 // Simplify path
 path.simplify(3);                       // parameter is the distance in m from line below which point will be deleted
 </pre>
+
+## Access geoFunctions directly
+
+The following standalone functions are provided.  First require the library:
+<pre>
+const geoFunctions = require('../index').geoFunctions;
+const Point = require('../index').Point;
+</pre>
+
+All geoFunctions will take Points or Point-like objects of the form {"lat":xxx, "lng":xxx}:
+<pre>
+const p1 = new Point({"lat":51.2194,"lng":-3.94915});
+const p2 = {"lat":51.2192,"lng":-3.94935};
+const p3 = new Point({"lat":51.2392,"lng":-3.95935});
+</pre>
+ 
+Distance between two points:
+<pre>
+console.log(geoFunctions.p2p(p1, p2));      // 26.270488219732563
+</pre>
+
+Distance between a great circle line joining two points (defined by the first two points) and a third point:
+<pre>
+console.log(geoFunctions.p2l(p1, p3, p2));  // -20.105464375742027
+</pre>
+
+Bearing between two points: 
+<pre>
+const bearingInRADS = geoFunctions.bearing(p1, p3)
+console.log(bearingInRADS);                          // -0.31198169868786196 in RADIANS
+console.log(geoFunctions.rads2degs(bearingInRADS));  // -17.875234620136624 in DEGREES
+</pre>
+
+Convert degrees to radians and radians to degrees:
+<pre>
+console.log(geoFunctions.rads2degs(3.14159));        // 179.9998479605043
+console.log(geoFunctions.degs2rads(180));            // 3.141592653589793
+</pre>
+
+Get the bounding box for a list of points:
+<pre>
+console.log(geoFunctions.boundingBox([p1, p2, p3])); //{ minLng: -3.95935,maxLng: -3.94915,minLat: 51.2192,maxLat: 51.2392}
+</pre>
+
+Test if a point is within a given bounding box:
+<pre>
+const box = {minLat: 51, maxLat: 52, minLng: -1, maxLng: 0};
+console.log(geoFunctions.isPointInBox({lat: 50.9999, lng: -0.5}, box));   //false
+console.log(geoFunctions.isPointInBox({lat: 51.5001, lng: -0.5}, box));   //true
+</pre>
+
+Simplify a list of points returns an object with parameters points and ratio, which is the ratio simplified length / original length:
+<pre>
+const coords = [
+  {"lat":51.2194,"lng":-3.94915},
+  {"lat":51.21932,"lng":-3.94935},
+  {"lat":51.21919,"lng":-3.94989},
+  {"lat":51.21905,"lng":-3.95032},
+  {"lat":51.219,"lng":-3.95043},
+  {"lat":51.21893,"lng":-3.95052},
+  {"lat":51.21856,"lng":-3.95088},
+  {"lat":51.21835,"lng":-3.95112},
+  {"lat":51.21825,"lng":-3.95132},
+  {"lat":51.21819,"lng":-3.95147},
+  {"lat":51.21804,"lng":-3.95236},
+  {"lat":51.21804,"lng":-3.95255},
+  {"lat":51.21808,"lng":-3.953},
+  {"lat":51.2181,"lng":-3.95338},
+  {"lat":51.21808,"lng":-3.95372},
+  {"lat":51.21795,"lng":-3.95445},
+  {"lat":51.21794,"lng":-3.95477},
+  {"lat":51.2179,"lng":-3.95511},
+  {"lat":51.21774,"lng":-3.95564},
+  {"lat":51.21769,"lng":-3.95615}
+];
+console.log(geoFunctions.simplifyPath(coords, 5));
+// {
+//   points: [
+//      { lat: 51.2194, lng: -3.94915 },
+//      { lat: 51.219, lng: -3.95043 },
+//      { lat: 51.21825, lng: -3.95132 },
+//      { lat: 51.21804, lng: -3.95236 },
+//      { lat: 51.21808, lng: -3.95372 },
+//      { lat: 51.21769, lng: -3.95615 }
+//    ],
+//    ratio: 0.3
+//  }
+
+</pre>
