@@ -81,6 +81,24 @@ function bearing(p1, p2) {
 
 
 /**
+ * 
+ * @param {number} bearingInDegrees 
+ * @returns 
+ */
+function bearingAsCardinal(rads) {
+  if ((rads > 5.890 && rads <= 6.284) || (rads >= 0 && rads <= 0.393)) { return {from: 'South', to: 'North'}; }
+  if (rads > 0.393 && rads <= 1.178) { return {from: 'SW', to: 'NE'}; }
+  if (rads > 1.178 && rads <= 1.963) { return {from: 'West', to: 'East'}; }
+  if (rads > 1.963 && rads <= 2.749) { return {from: 'NW', to: 'SE'}; }
+  if (rads > 2.749 && rads <= 3.534) { return {from: 'North', to: 'South'}; }
+  if (rads > 3.534 && rads <= 4.320) { return {from: 'NE', to: 'SW'}; } 
+  if (rads > 4.320 && rads <= 5.105) { return {from: 'East', to: 'West'}; }
+  if (rads > 5.105 && rads <= 5.890) { return {from: 'SE', to: 'NW'}; }
+  throw new GeoFunctionsError('bearingAsCardinal will only accept input beween 0 and 2*PI');
+}
+
+
+/**
  * Simplify an array of Points using perpendicular distance method
  * http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.95.5882&rep=rep1&type=pdf
  * @param {Array<Point>} points array of Point instances
@@ -243,5 +261,6 @@ module.exports = {
   rads2degs, 
   degs2rads, 
   outerBoundingBox, 
-  isPointInBox
+  isPointInBox,
+  bearingAsCardinal
 }

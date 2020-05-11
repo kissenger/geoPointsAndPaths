@@ -9,6 +9,7 @@ const Path = require('../src/class-path').Path;
 const PathError = require('../src/class-path').PathError;
 const compareFuncs = require('./compare-funcs');
 
+
 // some param strings for reference
 // {"lat":51.2194,"lng":-3.94915}
 // {"lat":51.2194,"lng":-3.94915, "elev": 50, "HR": 136, "Cadence": 95};

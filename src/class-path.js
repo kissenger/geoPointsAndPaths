@@ -68,7 +68,7 @@ class Path{
 
 
   getParamFromPoints(paramName) {
-    if (this._isParamExistsOnAnyPoint(paramName)) {
+    if (this.isParamExistsOnAnyPoint(paramName)) {
       return this._points.map( point => {
         if (point.paramExists(paramName)) {
           return point.getParams(paramName)[paramName];
@@ -93,6 +93,13 @@ class Path{
     this._checkPointExists(index);
     return this._points[index];
   }
+
+  
+  isParamExistsOnAnyPoint(param) {
+    return this._points.some( point => point.hasOwnProperty('_' + param));
+  }
+
+  
 
 
   /**
@@ -124,11 +131,6 @@ class Path{
     if (!(arr.length > 1)) {
       throw new PathError('Need two or more points to instantiate a Path');
     }
-  }
-
-
-  _isParamExistsOnAnyPoint(param) {
-    return this._points.some( point => point.hasOwnProperty('_' + param));
   }
 
 

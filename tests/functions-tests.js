@@ -208,6 +208,24 @@ describe(`Test functions`, function() {
     });
 
   })    
+
+  describe(`Bearing as cardinal`, function() {
+
+    it('provides South to North output for 0rads', function() {
+      expect(geoFun.bearingAsCardinal(0)).to.deep.equal({from: 'South', to: 'North'})
+    });
+
+    it('provides NW to SE output for 2.32157rads', function() {
+      expect(geoFun.bearingAsCardinal(2.32157)).to.deep.equal({from: 'NW', to: 'SE'})
+    });
+
+    it('should throw error \'bearingAsCardinal will only accept input beween 0 and 2*PI\' if bearing is out of range', function() {
+      expect(geoFun.bearingAsCardinal.bind(geoFun.bearingAsCardinal, 390)).to.throw('bearingAsCardinal will only accept input beween 0 and 2*PI');
+    });
+
+  })    
+
+
 });
 
 
