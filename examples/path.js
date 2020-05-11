@@ -62,17 +62,21 @@ try {
 }
 
 // Other getters
-console.log(path.lngLats);
-console.log(path.length);
-console.log(path.boundingBox);
-console.log(path.cumulativeDistance);
-console.log(path.distance);
+console.log(path.lngLats);              // simple array of [lng,lat] coordinates
+console.log(path.length);               // number of points in the path
+console.log(path.boundingBox);          // bounding box as {minLat, minLng, maxLat, maxLng}
+console.log(path.deltaDistance);        // array with distance between each succcessive point
+console.log(path.cumulativeDistance);   // array with cumulative distance between each point
+console.log(path.distance);             // total distance of the path
+console.log(path.simplificationRatio);  // simplification ratio (simplified length / original length)
 
 // Simplify path
 path.simplify(3);
-console.log(path.lngLats);
-console.log(path.length);
-console.log(path.boundingBox);
-console.log(path.cumulativeDistance);
-console.log(path.distance);
+console.log(path.lngLats);              // simple array of [lng,lat] coordinates
+console.log(path.length);               // number of points in the path
+console.log(path.boundingBox);          // bounding box as {minLat, minLng, maxLat, maxLng}
+console.log(path.deltaDistance);        // array with distance between each succcessive point
+console.log(path.cumulativeDistance);   // array with cumulative distance between each point
+console.log(path.distance);             // total distance of the path
+console.log(path.simplificationRatio);  // simplification ratio (simplified length / original length)
 

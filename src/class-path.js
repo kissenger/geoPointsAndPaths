@@ -10,7 +10,7 @@ class Path{
   constructor(pointsArray) {
     this._checkForValidInput(pointsArray);
     this._points = pointsArray;
-    this._simplificationRatio = 1;
+    this._originalLength = this.length;
   }
 
   /**
@@ -48,7 +48,7 @@ class Path{
   } 
 
   get simplificationRatio() {
-    return this._simplificationRatio
+    return  this.length / this._originalLength;
   }
 
 
