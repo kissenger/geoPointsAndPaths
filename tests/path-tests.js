@@ -36,7 +36,7 @@ const coords = [
   {"lat":51.21769,"lng":-3.95615}
 ];
 
-const points = coords.map( c => new Point(c));
+// const points = coords.map( c => new Point(c));
 const elevs = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ];
 
 /**
@@ -45,6 +45,8 @@ const elevs = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 1
 describe(`Correctly instantiating Path`, function() {
 
   describe(`Instantiating a path`, function() {
+
+    const points = coords.map( c => new Point(c));
 
     it('should return an instance of Path when initialised with two points', function() {
       expect(new Path(points.slice(0,2))).to.satisfy(function(r) { return r instanceof Path});
@@ -76,11 +78,13 @@ describe(`Correctly instantiating Path`, function() {
 
 
     it('should throw \'Array of Point instances expected to initialise\' if any element in array is not a point', function() {
+      const points = coords.map( c => new Point(c));
       const func = () => new Path([...points, {"lat":51.21769,"lng":-3.95615}]);
       expect(func.bind(func)).to.throw('Array of Point instances expected to initialise');
     })
 
     it('should throw \'Need two or more points to instantiate a Path\' if passed only a single point', function() {
+      const points = coords.map( c => new Point(c));
       const func = () => new Path(points.slice(0,1));
       expect(func.bind(func)).to.throw('Need two or more points to instantiate a Path');
     })
@@ -104,6 +108,7 @@ describe(`Test Path methods`, function() {
 
 
     it('should have elev on each point in path', function() {
+      const points = coords.map( c => new Point(c));
       const path = new Path(points);
       path.addParamToPoints('elev', elevs);
       expect(path).to.satisfy(function(result) { return result._points.every(p => p.hasOwnProperty('_elev'))  } ); 
@@ -111,6 +116,7 @@ describe(`Test Path methods`, function() {
 
     
     it('param name can have spaces', function() {
+      const points = coords.map( c => new Point(c));
       const path = new Path(points);
       path.addParamToPoints('elev', elevs);      
       path.addParamToPoints('elev gain', elevs);
@@ -119,13 +125,16 @@ describe(`Test Path methods`, function() {
 
     
     it('should ignore attempt to add duplicate parameter', function() {
+      const points = coords.map( c => new Point(c));
       const path = new Path(points);
-      path.addParamToPoints('elev gain', elevs.map(e => e*2));
+      path.addParamToPoints('elev', elevs);
+      path.addParamToPoints('elev', elevs.map(e => e*2));
       expect(path.getParamFromPoints('elev')).to.deep.equal(elevs);
     });
     
     
     it('should return an instance of PathError if array is not the correct length', function() {
+      const points = coords.map( c => new Point(c));
       const path = new Path(points);
       const newElevs = [...elevs, 1,2,3];
       try {
@@ -138,22 +147,39 @@ describe(`Test Path methods`, function() {
   })
 
 
+  describe(`Delete a param from points`, function() {
+
+
+    it('should have elev on each point in path', function() {
+      const points = coords.map( c => new Point(c));
+      const newpath = new Path(points);
+      newpath.addParamToPoints('elev', elevs);
+      newpath.deleteParamFromPoints('elev');
+      expect(newpath).to.satisfy(function(result) { return result._points.every(p => !p.hasOwnProperty('_elev'))  } ); 
+    });
+
+  })
+
+
   describe(`Get param from points`, function() {
 
-    const path = new Path(points);
-    path.addParamToPoints('elev', elevs);
     it('should have elev on each point in path', function() {
+      const points = coords.map( c => new Point(c));
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
       expect(path.getParamFromPoints('elev')).to.deep.equal(elevs);
     });
 
 
-    const newPath = new Path([
-      new Point({"lat":51.2194,"lng":-3.94915,"beer": 'peroni'}),
-      new Point({"lat":51.21932,"lng":-3.94935}),
-      new Point({"lat":51.21919,"lng":-3.94989,"beer": 'peroni'}),
-      new Point({"lat":51.21905,"lng":-3.95032,"beer": 'peroni'})
-    ]);
+
     it('should return null for any point without the desired paramater', function() {
+      const points = coords.map( c => new Point(c));
+      const newPath = new Path([
+        new Point({"lat":51.2194,"lng":-3.94915,"beer": 'peroni'}),
+        new Point({"lat":51.21932,"lng":-3.94935}),
+        new Point({"lat":51.21919,"lng":-3.94989,"beer": 'peroni'}),
+        new Point({"lat":51.21905,"lng":-3.95032,"beer": 'peroni'})
+      ]);
       expect(newPath.getParamFromPoints('beer')).to.deep.equal(['peroni', null, 'peroni', 'peroni']);
     });
 
@@ -161,6 +187,8 @@ describe(`Test Path methods`, function() {
 
 
   describe(`Get point`, function() {
+
+    const points = coords.map( c => new Point(c));
 
     it('get a point from path should return requested point', function() {
       const path = new Path(points);
@@ -179,6 +207,8 @@ describe(`Test Path methods`, function() {
 
 
   describe(`Using simplify as a method on Path instance`, function() {
+
+    const points = coords.map( c => new Point(c));
 
     it('expected output for tol=0 (no simplify)', function() {
       const path = new Path(points);
@@ -217,6 +247,8 @@ describe(`Test Path methods`, function() {
 
 
 describe(`Test getters`, function() {
+
+  const points = coords.map( c => new Point(c));
 
   it('get lngLats should produce the expected result', function() {
     const path = new Path(points);

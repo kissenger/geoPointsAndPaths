@@ -51,6 +51,11 @@ class Path{
   }
 
 
+  deleteParamFromPoints(paramName) {
+    this._points.forEach( (point, i) => point.deleteParams(paramName) );
+  }
+
+
   getParamFromPoints(paramName) {
     return this._points.map( point => {
       if (point.paramExists(paramName)) {
