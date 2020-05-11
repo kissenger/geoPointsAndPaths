@@ -42,7 +42,6 @@ console.log(point); // Point {_lng: -4.94989,_lat: 53.21919,_elevation: 56,_HR: 
  * Delete paramaters
  */
 
-// To add additional parameters after instantiation (no matter which way instance was created) use addParams method.  
 point.deleteParams("elevation", "HR");
 point.deleteParams(["colour", "temperature"]);
 console.log(point);  // Point { _lng: -4.94989, _lat: 53.21919, _cadance: 99 }
@@ -66,7 +65,7 @@ console.log(point.lat); // 52.12345
 console.log(point.lng); // -2.34567
 
 // For other params use getParams can provide list or array
-console.log(point.getParams('power', 'lat'));  // { power: 289, lat: 52.12345 }
+console.log(point.getParams('power', 'lat', 'HR'));  // { power: 289, lat: 52.12345 }
 console.log(point.getParams(['lat', 'lng']));  // { lat: 52.12345, lng: -2.34567 }
 
 
