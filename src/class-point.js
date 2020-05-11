@@ -67,6 +67,7 @@ class Point {
    * @param {Object} params list of key/value pairs to add to point eg {elev: 53}
    */
   addParams(params) {
+    this._checkParams(params);
     Object.keys(params).forEach( key => {
       if (!this.paramExists(key)) {
         this['_' + key] = params[key];
@@ -116,6 +117,16 @@ class Point {
    * Private class methods
    */
 
+   _checkParams(params) {
+     if (params instanceof Array) {
+      throw new PointError('params should not be an array');
+     }
+     if (!(params instanceof Object)) {
+      throw new PointError('params should be an object');
+     }
+   }
+
+   
   _checkForValidLatAndLng(params) {
     const keys = Object.keys(params);
     this._checkForLngKey(keys);
