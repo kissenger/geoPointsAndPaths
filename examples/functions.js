@@ -47,7 +47,7 @@ const coords = [
   {"lat":51.21794,"lng":-3.95477},
   {"lat":51.2179,"lng":-3.95511},
   {"lat":51.21774,"lng":-3.95564},
-  {"lat":51.21769,"lng":-3.95615}
+  {"lat":51.21769,"lng":-3.95615} 
 ];
 console.log(geoFunctions.simplifyPath(coords, 5));
 // [
