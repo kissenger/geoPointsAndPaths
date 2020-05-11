@@ -1,5 +1,5 @@
-# geolib
-Library for storing and manipulating coordinate data as Points and Paths, with common methods including path simplification, point to point distance etc.  Any number of named parameters (such as 'elevation') can be associated with each point, w
+# geoPointsAndPaths
+Library for storing and manipulating coordinate data as Points and Paths, with common methods including path simplification, point to point distance etc.  Any number of named parameters (such as 'elevation') can be associated with each point.  Distance calculations between points are based on Haversine - there are more accurate, slower, methods available and any number of nom libraries to calculate them.
 
 <ul>
   <li> Point: Store any number of named paramaters on each point </li>
