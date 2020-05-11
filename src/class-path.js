@@ -51,6 +51,13 @@ class Path{
     return  this.length / this._originalLength;
   }
 
+  get firstPoint() {
+    return this.getPoint(0);
+  }
+
+  get lastPoint() {
+    return this.getPoint(this.length - 1);
+  }
 
   /**
    * Public class methods

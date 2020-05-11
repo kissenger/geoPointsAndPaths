@@ -220,7 +220,6 @@ describe(`Test Path methods`, function() {
     it('expected output for tol=0 (no simplify)', function() {
       const path = new Path(points);
       path.simplify(0);
-      console.log(path)
       const pathPoints = [];
       for (let i = 0; i < path.length; i++) {
         pathPoints.push(path.getPoint(i));
@@ -305,6 +304,18 @@ describe(`Test getters`, function() {
       }
     })
     expect(path.deltaDistance.map(d=>d.toFixed(6))).to.deep.equal(expectedResult.map(d=>d.toFixed(6)));
+  });
+
+  
+  it('get firstPoint should return the first point', function() {
+    const path = new Path(points);
+    expect(path.firstPoint).to.deep.equal(points[0]);
+  });
+
+  
+  it('get lastPoint should return the last point', function() {
+    const path = new Path(points);
+    expect(path.lastPoint).to.deep.equal(points[points.length - 1]);
   });
 
 })
