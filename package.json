@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Simple library pulling together commonly used geographic functions such as distance between points, path simplification etc",
   "main": "index.js",
+  "repository": "https://github.com/kissenger/geolib",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
