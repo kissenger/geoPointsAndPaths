@@ -266,7 +266,6 @@ describe(`Checking Point use cases`, function() {
     const point = new Point({"lat":51.2194,"lng":-3.94915});
     point.addParams({'elev climbed': 56});
     const expectedPointKeys = Object.keys(point).map(key => key);
-    console.log(point);
 
     it('Expect Point keys to be lat, lng and \'elev climbed\'', function() {
       expect(expectedPointKeys).deep.equal(['_lat', '_lng', '_elev climbed']);

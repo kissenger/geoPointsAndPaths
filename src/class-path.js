@@ -1,7 +1,6 @@
 "use strict"
 const geoFun = require('./functions.js');
 const Point = require('./class-point.js').Point;
-const BoundingBox = require('./class-bbox.js').BoundingBox;
 
 /**
  * Instantiated with an array of two or more Point instances - will throw error otherwise
@@ -28,7 +27,7 @@ class Path{
 
 
   get boundingBox() {
-    return new BoundingBox(this._points);
+    return geoFun.boundingBox(this._points);
   }
 
 
@@ -100,7 +99,7 @@ class Path{
 
 
   _checkTwoOrMorePoints(arr) {
-    if (!arr.length > 1) {
+    if (!(arr.length > 1)) {
       throw new PathError('Need two or more points to instantiate a Path');
     }
   }

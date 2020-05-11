@@ -1,9 +1,5 @@
 const expect = require('chai').expect;
 const Point = require('../src/class-point').Point;
-const Path = require('../src/class-path').Path;
-const BoundingBox = require('../src/class-bbox').BoundingBox;
-const PathError = require('../src/class-path').PathError;
-const GeoFunctionsError = require('../src/functions').GeoFunctionsError;
 const geoFun = require('../src/functions');
 const compareFuncs = require('./compare-funcs');
 
@@ -142,8 +138,8 @@ describe(`Test functions`, function() {
         .to.deep.equal(compareFuncs.simplify(points, 10).map(p=>[p.lng, p.lat]));
     });
 
-    it('return error if tolerance is not a number', function() {
-      expect(geoFun.simplifyPath.bind(geoFun.simplifyPath, points,'chair')).to.throw('Supplied tolerance is not a number');
+    it('throw \'... is Not a Number\' is invalid tolerance is passed', function() {
+      expect(geoFun.simplifyPath.bind(geoFun.simplifyPath, points,'chair')).to.throw('chair is Not a Number');
     });
 
     it('return error if array contains a non point-like input', function() {
@@ -152,6 +148,66 @@ describe(`Test functions`, function() {
     });
 
   })
+
+
+  describe(`Bounding box`, function() {
+
+    it('expected output for simple bounding box with Points input', function() {
+      expect(geoFun.boundingBox(points)).to.deep.equal({ minLng: -3.95615, maxLng: -3.94915, minLat: 51.21769, maxLat: 51.2194})
+    });
+
+    it('expected output for simple bounding box with Points-like input', function() {
+      expect(geoFun.boundingBox(coords)).to.deep.equal({ minLng: -3.95615, maxLng: -3.94915, minLat: 51.21769, maxLat: 51.2194})
+    });
+
+    it('expected output for bounding box of bounding boxes with Points input', function() {
+      const bbox1 = geoFun.boundingBox(points.slice(0,5));
+      const bbox2 = geoFun.boundingBox(points.slice(5, 10));
+      const bbox3 = geoFun.boundingBox(points.slice(10, 15));
+      const bbox4 = geoFun.boundingBox(points.slice(15));
+
+      expect(geoFun.outerBoundingBox([bbox1, bbox2, bbox3, bbox4])).to.deep.equal({ minLng: -3.95615, maxLng: -3.94915, minLat: 51.21769, maxLat: 51.2194})
+    });
+
+    it('isPointInBox should return true if point is in box', function() {
+      const box = {minLat: 51, maxLat: 52, minLng: -1, maxLng: 0};
+      const point = {lat: 51.5, lng: -0.5};
+      expect(geoFun.isPointInBox(point, box)).to.equal(true)
+    });
+
+    it('isPointInBox should return true if point is on the boundary of box', function() {
+      const box = {minLat: 51, maxLat: 52, minLng: -1, maxLng: 0};
+      const point = {lat: 51, lng: -0.5};
+      expect(geoFun.isPointInBox(point, box)).to.equal(true)
+    });
+
+    it('isPointInBox should return false if point is outside the box', function() {
+      const box = {minLat: 51, maxLat: 52, minLng: -1, maxLng: 0};
+      const point = {lat: 50.9999, lng: -0.5};
+      expect(geoFun.isPointInBox(point, box)).to.equal(false)
+    });
+    
+  })  
+
+  describe(`Degs2rads and Rads2degs`, function() {
+
+    it('Degs2rads 180 degs = pi to 10 dp', function() {
+      expect(geoFun.degs2rads(180).toFixed(10)).to.equal(Math.PI.toFixed(10))
+    });
+
+    it('Degs2rads 37.5 degs = 37.5/180*pi to 10 dp', function() {
+      expect(geoFun.degs2rads(37.5).toFixed(10)).to.equal((37.5/180*Math.PI).toFixed(10))
+    });
+
+    it('Rads2degs pi  = 180degs to 10 dp', function() {
+      expect(geoFun.rads2degs(Math.PI).toFixed(10)).to.equal((180).toFixed(10))
+    });
+
+    it('Rads2degs 0.126374 rads = 0.126374 *180 / pi degs to 10 dp', function() {
+      expect(geoFun.rads2degs(0.126374).toFixed(10)).to.equal((0.126374*180/Math.PI).toFixed(10))
+    });
+
+  })    
 });
 
 

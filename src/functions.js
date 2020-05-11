@@ -1,3 +1,5 @@
+"use strict"
+
 /**
  * Geo functions
  * See https://www.movable-type.co.uk/scripts/latlong.html as a useful reference
@@ -15,7 +17,7 @@ const Point = require ('./class-point.js').Point; // only needed for instance ch
  */
 function p2p(p1, p2) {
 
-  checkInputs(p1, p2);
+  checkPoints(p1, p2);
 
   const lat1 = degs2rads(p1.lat);
   const lat2 = degs2rads(p2.lat);
@@ -34,14 +36,15 @@ function p2p(p1, p2) {
 
 
 /**
-* Returns distance in meters between a line (defined by p1 and p2) and a point (p3)
-* @param {Point} p1 lng/lat of line start in decimal degrees as instance of Point class
-* @param {Point} p2 lng/lat of line end in decimal degrees as instance of Point class
-* @param {Point} p3 lng/lat of mid-point in decimal degrees as instance of Point class
+* Distance in meters between a line (defined by p1 and p2) and a point (p3)
+* @param {Point} p1 lng/lat of line start in decimal degrees as Point or Point-like
+* @param {Point} p2 lng/lat of line end in decimal degrees as Point or Point-like
+* @param {Point} p3 lng/lat of mid-point in decimal degrees as Point or Point-like
+* @returns {number} distance in meters 
 */
 function p2l(p1, p2, p3) {
 
-  checkInputs(p1, p2, p3);
+  checkPoints(p1, p2, p3);
 
   const d13 = p2p(p1, p3) / 1000.0;
   const brg12 = bearing(p1, p2);
@@ -54,14 +57,15 @@ function p2l(p1, p2, p3) {
 
 /**
  * Returns bearing in radians between two points
- * @param {Point} p1 start point
- * @param {Point} p2 end point
- * @returns bearing in between two points in RADIANS
- * NOTE returns 0 (ie North) is two identical points are entered - TODO: does this case need to be handled?
+ * TODO: returns 0 (ie North) is two identical points are entered - does this case need to be handled?* 
+ * @param {Point} p1 start point as Point or Point-like
+ * @param {Point} p2 end point as Point or Point-like
+ * @returns {number} bearing in RADIANS between two points 
+
  */
 function bearing(p1, p2) {
 
-  checkInputs(p1, p2);
+  checkPoints(p1, p2);
 
   const lat1 = degs2rads(p1.lat);
   const lat2 = degs2rads(p2.lat);
@@ -106,25 +110,96 @@ function simplifyPath(points, tolerance) {
 }
 
 
-function checkIsNumber(value) {
-  if ( isNaN(value) ) {
-    throw new GeoFunctionsError('Supplied tolerance is not a number');
-  }
+/**
+ * Return an object containing the max/min lat/lng of the supplied points
+  * @param {Point} points array of Points or Point-like objects
+  * @returns object of the form { minLng: xx, minLat: xx, maxLng: xx, maxLat: xx }
+  */
+function boundingBox(points) {
+
+  checkPoints();
+
+  return points.reduce( (bbox, point) => ({ 
+    minLng: Math.min(point.lng, bbox.minLng),
+    maxLng: Math.max(point.lng, bbox.maxLng),
+    minLat: Math.min(point.lat, bbox.minLat),
+    maxLat: Math.max(point.lat, bbox.maxLat)
+  }), { minLng: 180, minLat: 90, maxLng: -180, maxLat: -90 });
+
 }
 
-function degs2rads(degs) {
+
+/**
+ * Reduce multiple bounding boxes to a single bounding box
+ * @param {Array<Object>} array of bounding box object of the form { minLng: xx, minLat: xx, maxLng: xx, maxLat: xx }
+ * @returns {Object} bounding box object of the form { minLng: xx, minLat: xx, maxLng: xx, maxLat: xx }
+ */
+function outerBoundingBox(arrayOfBboxes) {
+
+  checkBoundingBoxes(arrayOfBboxes);
+
+  const points = arrayOfBboxes.reduce( (arr, box) => 
+    [...arr, {lat: box.minLat, lng: box.minLng}, {lat: box.maxLat, lng: box.maxLng}]
+  , [] );
+
+  return boundingBox(points);
+}
+
+
+/**
+ * 
+ * @param {Point} point Point or Point-like object to test
+ * @param {Object} box bounding box object of the form { minLng: xx, minLat: xx, maxLng: xx, maxLat: xx }
+ * @returns {boolean}
+ */
+function isPointInBox(point, bbox) {
+
+  checkPoints(point);
+  checkBoundingBoxes(bbox);
+
+  return  point.lng <= bbox.maxLng &&
+          point.lng >= bbox.minLng &&
+          point.lat <= bbox.maxLat &&
+          point.lat >= bbox.minLat;
+}
+
+
+/**
+  * @param {number} degs number in degrees
+  * @returns {number} in radians
+  */
+ function degs2rads(degs) {
   return degs * 0.01745329251994329576; //0.0174... = Pi/180
-  
 };
 
 
-function checkInputs() {
+/**
+  * @param {number} rads number in radians
+  * @returns {number} in degrees
+  */
+ function rads2degs(rads) {
+  return rads / 0.01745329251994329576; //0.0174... = Pi/180
+};
+
+
+
+/**
+ * 'Private' methods not provided for use in public scope
+ */
+
+
+function checkIsNumber(value) {
+  if ( isNaN(value) ) {
+    throw new GeoFunctionsError(`${value} is Not a Number`);
+  }
+}
+
+function checkPoints() {
   const args = arguments[0] instanceof Array ? arguments[0] : [...arguments];
   if (!args.every(arg => isPointOrPointLike(arg))) {
     throw new GeoFunctionsError('Argument not a Point or Point-like object');
   }
 }
-
 
 function isPointOrPointLike(variable) {
 
@@ -141,10 +216,30 @@ function isPointOrPointLike(variable) {
   return false;
 }
 
+function checkBoundingBoxes(input) {
+  if (!(input instanceof Array)) { 
+    input = [input]
+  }
+  if ( input.every( bbox => 
+    bbox.hasOwnProperty('minLat') &&
+    bbox.hasOwnProperty('maxLat') &&
+    bbox.hasOwnProperty('minLng') &&
+    bbox.hasOwnProperty('maxLng'))) {
+    return
+  }
+  throw new Error(`Bounding boxes must be provided as object with properties minLat, maxLat, minLng, maxLng`);
+}
 
 class GeoFunctionsError extends Error{};
 
-
 module.exports = {
-  p2p, p2l, bearing, simplifyPath, GeoFunctionsError
+  p2p, 
+  p2l, 
+  bearing, 
+  simplifyPath, 
+  boundingBox, 
+  rads2degs, 
+  degs2rads, 
+  outerBoundingBox, 
+  isPointInBox
 }

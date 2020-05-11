@@ -6,9 +6,7 @@
 const expect = require('chai').expect;
 const Point = require('../src/class-point').Point;
 const Path = require('../src/class-path').Path;
-const BoundingBox = require('../src/class-bbox').BoundingBox;
 const PathError = require('../src/class-path').PathError;
-const GeoFunctionsError = require('../src/functions').GeoFunctionsError;
 const compareFuncs = require('./compare-funcs');
 
 // some param strings for reference
@@ -61,46 +59,35 @@ describe(`Correctly instantiating Path`, function() {
 
   describe(`Check error returns for incorrectly instantiating a Path`, function() {
 
-    it('should return an instance of PathError if an array is not passed', function() {
-      try {
-        new Path({"lat":51.21769,"lng":-3.95615});
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PathError});
-      }
+    it('should throw \'Input not an array\' if array is not passed', function() {
+      const func = () => new Path({"lat":51.21769,"lng":-3.95615});
+      expect(func.bind(func)).to.throw('Input not an array');
     });
 
-    it('should return an instance of PathError if passed array does not contain points', function() {
-      try {
-        new Path([1,2,3,4]);
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PathError});
-      }
+    it('should throw \'Array of Point instances expected to initialise\' if passed array does not contain points', function() {
+      const func = () => new Path([1,2,3,4]);
+      expect(func.bind(func)).to.throw('Array of Point instances expected to initialise');
     });
 
-    it('should return an instance of PathError if any element in array is not a point', function() {
-      try {
-        const newPoints = [...points];
-        newPoints.push({"lat":51.21769,"lng":-3.95615});
-        new Path(points);
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PathError});
-      }
+    it('should throw \'Array of Point instances expected to initialise\' if passed array does not contain points', function() {
+      const func = () => new Path([1,2,3,4]);
+      expect(func.bind(func)).to.throw('Array of Point instances expected to initialise');
+    });
+
+
+    it('should throw \'Array of Point instances expected to initialise\' if any element in array is not a point', function() {
+      const func = () => new Path([...points, {"lat":51.21769,"lng":-3.95615}]);
+      expect(func.bind(func)).to.throw('Array of Point instances expected to initialise');
     })
 
-    it('should return an instance of PathError if passed only a single point', function() {
-      try {
-        new Path(points.slice(0,1));
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PathError});
-      }
+    it('should throw \'Need two or more points to instantiate a Path\' if passed only a single point', function() {
+      const func = () => new Path(points.slice(0,1));
+      expect(func.bind(func)).to.throw('Need two or more points to instantiate a Path');
     })
 
-    it('should return an instance of PathError if no argument is passed', function() {
-      try {
-        new Path();
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PathError});
-      }
+    it('should throw \'Input not an array\' if no argument is passed', function() {
+      const func = () => new Path();
+      expect(func.bind(func)).to.throw('Input not an array');
     })
   });
 
@@ -172,32 +159,26 @@ describe(`Test Path methods`, function() {
 
   })
 
+
   describe(`Get point`, function() {
 
-    const path = new Path(points);
-    path.addParamToPoints('elev', elevs);
     it('get a point from path should return requested point', function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
       expect(path.getPoint(5)).to.deep.equal(points[5]);
     });
 
-    it('should return an instance of PathError if index is out of range', function() {
-      try {
-        path.getPoint(50);
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PathError});
-      }
+    it(`should throw \'Requested point at index 50 does not exist\' if attempt to access noexistant point`, function() {
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
+      const func = () => path.getPoint(50);
+      expect(func.bind(func)).to.throw(`Requested point at index 50 does not exist`);
     })
 
   })
 
 
   describe(`Using simplify as a method on Path instance`, function() {
-
-    // simplify using Path instance
-
-
-    // simplify using comparason function
-    // const expectedOutput = compareFuncs.simplify(points, 5);
 
     it('expected output for tol=0 (no simplify)', function() {
       const path = new Path(points);
@@ -206,7 +187,6 @@ describe(`Test Path methods`, function() {
       for (let i = 0; i < path.length; i++) {
         pathPoints.push(path.getPoint(i));
       }
-
       expect(pathPoints).to.deep.equal(points);
     });
 
@@ -225,15 +205,11 @@ describe(`Test Path methods`, function() {
       expect(pathPoints).to.deep.equal(expectedOutput);
     });    
 
-    it('return error if tolerance is not a number', function() {
-      try {
-        const path = new Path(points);
-        path.simplify('house');
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof GeoFunctionsError});
-      }
-
-    });
+    it(`should throw \'...is Not a Number\' if invalid tolerance is supplied`, function() {
+      const path = new Path(points);
+      const func = () => path.simplify('house');;
+      expect(func.bind(func)).to.throw(`house is Not a Number`);
+    })
 
   })
 
@@ -257,7 +233,7 @@ describe(`Test getters`, function() {
   it('get bbox should produce the expected result', function() {
     const path = new Path(points);
     path.addParamToPoints('elev', elevs);
-    expect(path.boundingBox).to.satisfy(function(r) { return r instanceof BoundingBox});
+    expect(path.boundingBox).to.deep.equal({ minLng: -3.95615, maxLng: -3.94915, minLat: 51.21769, maxLat: 51.2194})
   });
 
   it('get total Distance should produce the expected result', function() {

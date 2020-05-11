@@ -10,8 +10,13 @@
  * - deleteParams - deletes provdided parameters that exist in the instance, except lat and lng which cannot be deleted
  * - addParams - adds provided key/value pairs to the instance if they exist - DOES NOT OVERWRITE so need to delete first if update is reqd
  */
+
 class Point {
 
+  /**
+   * @class Point class to store coordinates and other name parameters associated with the point
+   * @param {*} params 
+   */
   constructor(params) {
     if (params) {
       this._checkForValidLatAndLng(params);
@@ -57,6 +62,10 @@ class Point {
    * Public class methods
    */
 
+  /**
+   * Add a named parameter to the Point instance.  Will not overwrite if key already exists.
+   * @param {Object} params list of key/value pairs to add to point eg {elev: 53}
+   */
   addParams(params) {
     Object.keys(params).forEach( key => {
       if (!this.paramExists(key)) {
@@ -65,7 +74,10 @@ class Point {
     });
   }
 
-
+  /**
+   * Delete a named parameter from Point instance.  Ignore without error if key does not exist.
+   * Accepts an array or lit of keys to delete eg 'elev', 'HR' or ['elev', 'HR'] are acceptable
+   */
   deleteParams() {
     const args = arguments[0] instanceof Array ? arguments[0] : [...arguments];
     args.forEach( key => {
@@ -75,7 +87,11 @@ class Point {
     })
   }
 
-
+  /**
+   * Get a specified parameter from the instance.
+   * Accepts an array or lit of keys to delete eg 'elev', 'HR' or ['elev', 'HR'] are acceptable
+   * @returns key value pairs for each key that exists eg {'HR': 75, 'elev': 0}
+   */
   getParams() {
     const args = arguments[0] instanceof Array ? arguments[0] : [...arguments];
     const result = {};
@@ -87,7 +103,11 @@ class Point {
     return result;
   }
 
-
+  /**
+   * test for the presence of a spcified parameter on the instance
+   * @param {string} key name of the parameter to be found
+   * @returns true or false
+   */
   paramExists(key) {
     return this.hasOwnProperty('_' + key)
   }
