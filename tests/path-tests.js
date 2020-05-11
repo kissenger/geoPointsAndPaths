@@ -170,6 +170,12 @@ describe(`Test Path methods`, function() {
       expect(path.getParamFromPoints('elev')).to.deep.equal(elevs);
     });
 
+    it('should return undefined if param does not exist', function() {
+      const points = coords.map( c => new Point(c));
+      const path = new Path(points);
+      path.addParamToPoints('elev', elevs);
+      expect(path.getParamFromPoints('beer')).to.equal(undefined);
+    });
 
 
     it('should return null for any point without the desired paramater', function() {
