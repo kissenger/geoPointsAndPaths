@@ -27,7 +27,7 @@ GeoFunctions:
 </ul>
 
 
-# Imparting the classes and functions#
+# Importing the classes and functions#
 
 Import the classes and functions
 <pre>

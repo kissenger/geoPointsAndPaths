@@ -1,6 +1,6 @@
 {
   "name": "geo-points-and-paths",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Simple classes to handle and calculate derived properties of geographic points and paths, such as distance etc.  Also allows simplification of paths and storage of multiple parameters on the points.",
   "main": "index.js",
   "repository": "https://github.com/kissenger/geoPointsAndPaths",
