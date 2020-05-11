@@ -292,6 +292,16 @@ describe(`Test getters`, function() {
     expect(path.cumulativeDistance.map(d=>d.toFixed(6))).to.deep.equal(expectedResult.map(d=>d.toFixed(6)));
   });
 
+  it('get deltaDistance should produce the expected result', function() {
+    const path = new Path(points);
+    const expectedResult = [0];
+    points.forEach( (_, i) => {
+      if (i>0) {
+        expectedResult.push(compareFuncs.p2p(points[i], points[i-1]));
+      }
+    })
+    expect(path.deltaDistance.map(d=>d.toFixed(6))).to.deep.equal(expectedResult.map(d=>d.toFixed(6)));
+  });
 
 })
 

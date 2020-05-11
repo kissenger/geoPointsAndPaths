@@ -10,6 +10,7 @@ class Path{
   constructor(pointsArray) {
     this._checkForValidInput(pointsArray);
     this._points = pointsArray;
+    this._isSimplified = false;
   }
 
   /**
@@ -37,9 +38,14 @@ class Path{
   
 
   get cumulativeDistance() {
-    const deltaDistance = this._points.map( (_, i, pts) => i === 0 ? 0 : geoFun.p2p(pts[i], pts[i-1]) );
+    const deltaDistance = this.deltaDistance;
     return this._points.map( (_, i) => deltaDistance.slice(0, i + 1).reduce( (sum, d) => sum + d, 0) );
   }
+
+
+  get deltaDistance() {
+    return this._points.map( (_, i, pts) => i === 0 ? 0 : geoFun.p2p(pts[i], pts[i-1]) );
+  } 
 
   /**
    * Public class methods
@@ -73,6 +79,7 @@ class Path{
 
   simplify(tol) {
     this._points = geoFun.simplifyPath(this._points, tol);
+    this._isSimplified = true;
   }
 
 
