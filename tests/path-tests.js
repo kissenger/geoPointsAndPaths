@@ -219,12 +219,15 @@ describe(`Test Path methods`, function() {
     it('expected output for tol=0 (no simplify)', function() {
       const path = new Path(points);
       path.simplify(0);
+      console.log(path)
       const pathPoints = [];
       for (let i = 0; i < path.length; i++) {
         pathPoints.push(path.getPoint(i));
       }
       expect(pathPoints).to.deep.equal(points);
+      expect(path.simplificationRatio).to.equal(1);
     });
+
 
     it('expected output for tol=5', function() {
       // simplify using Path instance

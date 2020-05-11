@@ -85,7 +85,7 @@ function bearing(p1, p2) {
  * http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.95.5882&rep=rep1&type=pdf
  * @param {Array<Point>} points array of Point instances
  * @param {number} TOLERANCE in metres, the higher the more simplified the result
- * @returns a new array containing the simplified set of points
+ * @returns object {points, ratio} where points is the simplified path and ratio is the compression ratio
  */
 function simplifyPath(points, tolerance) {
 
@@ -105,7 +105,9 @@ function simplifyPath(points, tolerance) {
     }
   }
 
-  return pointsToKeep.map( index => points[index] );
+  const ratio = (pointsToKeep.length / points.length).toFixed(3) * 1;
+
+  return {points: pointsToKeep.map( index => points[index]), ratio };
 
 }
 

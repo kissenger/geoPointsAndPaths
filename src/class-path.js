@@ -10,7 +10,7 @@ class Path{
   constructor(pointsArray) {
     this._checkForValidInput(pointsArray);
     this._points = pointsArray;
-    this._isSimplified = false;
+    this._simplificationRatio = 1;
   }
 
   /**
@@ -47,6 +47,11 @@ class Path{
     return this._points.map( (_, i, pts) => i === 0 ? 0 : geoFun.p2p(pts[i], pts[i-1]) );
   } 
 
+  get simplificationRatio() {
+    return this._simplificationRatio
+  }
+
+
   /**
    * Public class methods
    */
@@ -78,8 +83,9 @@ class Path{
 
 
   simplify(tol) {
-    this._points = geoFun.simplifyPath(this._points, tol);
-    this._isSimplified = true;
+    const simplifyResult = geoFun.simplifyPath(this._points, tol);
+    this._points = simplifyResult.points;
+    this._simplificationRatio = simplifyResult.ratio;
   }
 
 

@@ -126,15 +126,15 @@ describe(`Test functions`, function() {
   describe(`Simplify`, function() {
 
     it('expected output for tol=0 (no simplify)', function() {
-      expect(geoFun.simplifyPath(points, 0)).to.deep.equal(compareFuncs.simplify(points, 0));
+      expect(geoFun.simplifyPath(points, 0).points).to.deep.equal(compareFuncs.simplify(points, 0));
     });
 
     it('expected output for tol=5', function() {
-      expect(geoFun.simplifyPath(points, 5)).to.deep.equal(compareFuncs.simplify(points, 5));
+      expect(geoFun.simplifyPath(points, 5).points).to.deep.equal(compareFuncs.simplify(points, 5));
     });
 
     it('should accept point-like objects', function() {
-      expect(geoFun.simplifyPath(coords, 10).map(p=>[p.lng, p.lat]))
+      expect(geoFun.simplifyPath(coords, 10).points.map(p=>[p.lng, p.lat]))
         .to.deep.equal(compareFuncs.simplify(points, 10).map(p=>[p.lng, p.lat]));
     });
 
