@@ -22,6 +22,10 @@ class Path{
     return this._points.map(p => [p.lng, p.lat]);
   }
 
+  get pointLikes() {
+    return this._points.map(p => ({lng: p.lng, lat: p.lat}) )
+  }
+
   
   get length() {
     return this._points.length;

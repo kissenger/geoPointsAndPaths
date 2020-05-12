@@ -299,6 +299,12 @@ describe(`Test getters`, function() {
     expect(path.lngLats).to.deep.equal(points.map(p=>[p.lng, p.lat]));
   });
 
+  it('get pointLikes should produce the expected result', function() {
+    const path = new Path(points);
+    path.addParamToPoints('elev', elevs);
+    expect(path.pointLikes).to.deep.equal(coords);
+  });
+
   it('get length should produce the expected result', function() {
     const path = new Path(points);
     path.addParamToPoints('elev', elevs);

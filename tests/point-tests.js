@@ -50,7 +50,6 @@ describe(`Correctly instantiating Point`, function() {
     });
 
     it('should have keys \'lat\' and \'lng\' only', function() {
-      console.log(point)
       expect(Object.keys(point).map(key => key.substring(1))).deep.equal(['lat', 'lng']);
     });
 
