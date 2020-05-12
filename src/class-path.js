@@ -7,9 +7,10 @@ const Point = require('./class-point.js').Point;
  */
 class Path{
 
-  constructor(pointsArray) {
-    this._checkForValidInput(pointsArray);
-    this._points = pointsArray;
+  constructor(input) {
+    
+    this._checkForValidInput(input);
+    this._points = this._getPointsFromInput(input);
     this._originalLength = this.length;
   }
 
@@ -113,26 +114,45 @@ class Path{
    * Private class methods
    */
 
-  _checkForValidInput(pointsArray) {
-    this._checkIsAnArray(pointsArray);
-    this._checkAllElementsArePoints(pointsArray);
-    this._checkTwoOrMorePoints(pointsArray);
+   _getPointsFromInput(input) {
+    if (this._isArrayOfLngLats(input)) {
+      return input.map( lngLat => new Point(lngLat));
+
+    } else if (this._isArrayOfPoints(input)) {
+      return input;
+      
+    } else if (this._isArrayOfPointLikes(input)) {
+      return input.map( pointLike => new Point(pointLike));
+
+    } else {
+      throw new PathError('Cannot determine type of input');
+    }
+   }
+
+
+  _isArrayOfLngLats(input) {
+    return input.every( item => item instanceof Array && item.length === 2)
+  }
+  
+  _isArrayOfPoints(input) {
+    return input.every( item => item instanceof Point)
+  }
+  
+  _isArrayOfPointLikes(input) {
+    return input.every( item => item.hasOwnProperty('lat') && item.hasOwnProperty('lng'))
   }
 
+
+  _checkForValidInput(input) {
+    this._checkIsAnArray(input);
+    this._checkTwoOrMorePoints(input);
+  }
 
   _checkIsAnArray(thing) {
     if (! (thing instanceof Array)) {
       throw new PathError('Input not an array');
     }
   }
-
-
-  _checkAllElementsArePoints(arr) {
-    if (!arr.every( point => point instanceof Point)) {
-      throw new PathError('Array of Point instances expected to initialise');
-    }
-  }
-
 
   _checkTwoOrMorePoints(arr) {
     if (!(arr.length > 1)) {

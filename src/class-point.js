@@ -3,6 +3,7 @@
 /**
  * Can be instantiated with:
  * - Parameter list which *must* include lng and lat, in the form {"lat":51.2194,"lng":-3.94915, "elev": 50, "HR": 136, "Cadence": 95}
+ * - An array of LngLat in the form [lng, lat];
  * - Empty, allowing for lat and long to be set through getters
  * Public methods:
  * - getters and setters for lat and lng

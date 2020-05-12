@@ -37,6 +37,30 @@ const coords = [
   {"lat":51.21769,"lng":-3.95615}
 ];
 
+//note that lngLats are the wrong way round, but doesnt affect the test
+const lngLats =   [
+  [51.2194,-3.94915],
+  [51.21932,-3.94935],
+  [51.21919,-3.94989],
+  [51.21905,-3.95032],
+  [51.219,-3.95043],
+  [51.21893,-3.95052],
+  [51.21856,-3.95088],
+  [51.21835,-3.95112],
+  [51.21825,-3.95132],
+  [51.21819,-3.95147],
+  [51.21804,-3.95236],
+  [51.21804,-3.95255],
+  [51.21808,-3.953],
+  [51.2181,-3.95338],
+  [51.21808,-3.95372],
+  [51.21795,-3.95445],
+  [51.21794,-3.95477],
+  [51.2179,-3.95511],
+  [51.21774,-3.95564],
+  [51.21769,-3.95615]
+]
+
 // const points = coords.map( c => new Point(c));
 const elevs = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ];
 
@@ -57,6 +81,16 @@ describe(`Correctly instantiating Path`, function() {
       expect(new Path(points)).to.satisfy(function(r) { return r instanceof Path});
     });
 
+    it('should return an instance of Path when initialised with more than point-likes', function() {
+      expect(new Path(coords)).to.satisfy(function(r) { return r instanceof Path});
+    });
+
+    it('should return an instance of Path when initialised with more than lngLats', function() {
+      expect(new Path(lngLats)).to.satisfy(function(r) { return r instanceof Path});
+    });
+
+
+
   })
 
 
@@ -67,28 +101,28 @@ describe(`Correctly instantiating Path`, function() {
       expect(func.bind(func)).to.throw('Input not an array');
     });
 
-    it('should throw \'Array of Point instances expected to initialise\' if passed array does not contain points', function() {
+    it('should throw \'Cannot determine type of input\' if passed array that is not Points, Lnglats or point-like', function() {
       const func = () => new Path([1,2,3,4]);
-      expect(func.bind(func)).to.throw('Array of Point instances expected to initialise');
+      expect(func.bind(func)).to.throw('Cannot determine type of input');
     });
 
-    it('should throw \'Array of Point instances expected to initialise\' if passed array does not contain points', function() {
-      const func = () => new Path([1,2,3,4]);
-      expect(func.bind(func)).to.throw('Array of Point instances expected to initialise');
-    });
+    it('should throw \'Cannot determine type of input\' if passed array that is not Points, Lnglats or point-like', function() {
+      const func = () => new Path([[1,2],[3,4, 5]]);
+      expect(func.bind(func)).to.throw('Cannot determine type of input');
+    });    
 
-
-    it('should throw \'Array of Point instances expected to initialise\' if any element in array is not a point', function() {
-      const points = coords.map( c => new Point(c));
-      const func = () => new Path([...points, {"lat":51.21769,"lng":-3.95615}]);
-      expect(func.bind(func)).to.throw('Array of Point instances expected to initialise');
-    })
+    it('should throw \'Cannot determine type of input\' if passed array that is not Points, Lnglats or point-like', function() {
+      const func = () => new Path([{lat:23, lng:34}, {lip:23, lng:34}, {lat:23, lng:34}]);
+      expect(func.bind(func)).to.throw('Cannot determine type of input');
+    });       
 
     it('should throw \'Need two or more points to instantiate a Path\' if passed only a single point', function() {
       const points = coords.map( c => new Point(c));
       const func = () => new Path(points.slice(0,1));
       expect(func.bind(func)).to.throw('Need two or more points to instantiate a Path');
     })
+
+    
 
     it('should throw \'Input not an array\' if no argument is passed', function() {
       const func = () => new Path();
