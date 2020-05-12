@@ -75,68 +75,46 @@ describe(`Correctly instantiating Point`, function() {
   describe(`Check error returns for incorrectly instantiating a Point`, function() {
 
     it('should return an instance of PointError if keys do not contain lng is not passed', function() {
-      try {
-        point = new Point({lat:51.2194,"lon":-3.94915});
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PointError});
-      }
+      const func = () => new Point({lat:51.2194,"lon":-3.94915});
+      expect(func.bind(func)).to.throw('Lng parameter missing');
     });
 
     it('should return an instance of PointError if keys do not contain lat is not passed', function() {
-      try {
-        point = new Point({"lng":-3.94915});
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PointError});
-      }
+      const func = () => new Point({"lng":-3.94915});
+      expect(func.bind(func)).to.throw('Lat parameter missing');
     });
 
     it('should return an instance of PointError if lng is not a valid value', function() {
-      try {
-        point = new Point({"lat":51.2194,"lng":-320.94915});
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PointError});
-      }
+      const func = () => new Point({"lat":51.2194,"lng":-320.94915});
+      expect(func.bind(func)).to.throw('Lng value out of bounds');
     });
 
     it('should return an instance of PointError if lng is not a valid type', function() {
-      try {
-        point = new Point({"lat":51.2194,"lng":'cheese'});
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PointError});
-      }
+      const func = () => new Point({"lat":51.2194,"lng":'cheese'});
+      expect(func.bind(func)).to.throw('Lng is NaN');
     });
 
-    it('should return an instance of PointError if lat is not a valid value', function() {
-      try {
-        point = new Point({"lat":91.2194,"lng":-3.94915});
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PointError});
-      }
+    it('should return an instance of PointError if let is not a valid value', function() {
+      const func = () => new Point({"lat":541.2194,"lng":-33.94915});
+      expect(func.bind(func)).to.throw('Lat value out of bounds');
     });
 
-    it('should return an instance of PointError if lat is not a valid type', function() {
-      try {
-        point = new Point({"lat":true,"lng":-3.94915});
-      } catch (err) {
-        expect(err).to.satisfy(function(r) { return r instanceof PointError});
-      }
+    it('should return an instance of PointError if lng is not a valid type', function() {
+      const func = () => new Point({"lat":'house',"lng":-33.94915});
+      expect(func.bind(func)).to.throw('Lat is NaN');
     });
 
-    it('should not throw error if empty array is passed', function() {
-      try {
-        point = new Point([]);
-      } catch (err) {      
-        expect(err).to.satisfy(function(r) { return r instanceof PointError});
-      }
+    it('should throw error if empty array is passed', function() {
+      const func = () => new Point([]);
+      expect(func.bind(func)).to.throw('Lng parameter missing');
     });
 
-    it('should not throw error if empty object is passed', function() {
-      try {
-        point = new Point({});
-      } catch (err) {      
-        expect(err).to.satisfy(function(r) { return r instanceof PointError});
-      }
+    it('should throw error if empty object is passed', function() {
+      const func = () => new Point({});
+      expect(func.bind(func)).to.throw('Lng parameter missing');
     });
+
+
 
     
   });
@@ -242,14 +220,28 @@ describe(`Checking Point methods`, function() {
       expect(point.lng).equal(135.2103);
     });
 
+    it('Set lngLat', function() {
+      point.lngLat = [-4.5678, 56.3543];
+      expect(point.lat).equal(56.3543);
+      expect(point.lng).equal(-4.5678);
+    });
+
   });
 
   describe(`Error checking Point Methods `, function() {
 
-    it('should return error if attempt to use get on empty inastance', function() {
-      expect(new Point()).to.satisfy(function(r) { return r instanceof Point});
+    it('should throw error if getting before setting lat', function() {
+      const point = new Point();
+      const func = () => point.lat;
+      expect(func.bind(func)).to.throw(`param lat does not exist`);
     });
-  
+
+    it('should throw error if getting before setting lng', function() {
+      const point = new Point();
+      const func = () => point.lng;
+      expect(func.bind(func)).to.throw(`param lng does not exist`);
+    });
+
   })
 
 })

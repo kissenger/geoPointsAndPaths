@@ -29,21 +29,14 @@ class Point {
    */
 
   get lng() { 
-    this
-    if (this.paramExists('lng')) {
-      return this._lng;
-    } else {
-      return new PointError('lng has not been set on the instance')
-    }
+    this._checkParamExists('lng');
+    return this._lng;
   }
   
 
   get lat() { 
-    if (this.paramExists('lat')) {
-      return this._lat;
-    } else {
-      return new PointError('lat has not been set on the instance')
-    }
+    this._checkParamExists('lat');
+    return this._lat;
   }
 
 
@@ -57,6 +50,14 @@ class Point {
     this._checkLatValue(value);
     this._lat = value; 
   }
+
+
+  set lngLat(value) {
+    this._checkLngLatArray(value)
+    this._lng = value[0];
+    this._lat = value[1];
+  }
+
 
   /**
    * Public class methods
@@ -113,18 +114,35 @@ class Point {
     return this.hasOwnProperty('_' + key)
   }
 
+
   /**
    * Private class methods
    */
 
-   _checkParams(params) {
-     if (params instanceof Array) {
+  _checkParamExists(param) {
+     if (!this.paramExists(param)) {
+       throw new PointError(`param ${param} does not exist`);
+     }
+  }
+
+  _checkLngLatArray(thing) {
+    if ( !(thing instanceof Array)) {
+      throw new PointError('lnglat needs to be an array');
+    }
+    if ( thing.length !== 2) {
+      throw new PointError('lnglat needs to be an array of length 2');
+    }    
+  }
+
+
+  _checkParams(params) {
+    if (params instanceof Array) {
       throw new PointError('params should not be an array');
-     }
-     if (!(params instanceof Object)) {
+    }
+    if (!(params instanceof Object)) {
       throw new PointError('params should be an object');
-     }
-   }
+    }
+  }
 
    
   _checkForValidLatAndLng(params) {
@@ -138,19 +156,22 @@ class Point {
 
   _checkForLatKey(keys) {
     if ( keys.indexOf('lat') < 0 ) {
-      throw new PointError('Lat parameter missing but required to instantiate Point with parameters');
+      throw new PointError('Lat parameter missing');
     }
   }
 
 
   _checkForLngKey(keys) {
     if ( keys.indexOf('lng') < 0 ) {
-      throw new PointError('Lng parameter missing but required to instantiate Point with parameters');
+      throw new PointError('Lng parameter missing');
     }
   }
 
 
   _checkLatValue(value) {
+    if (isNaN(value)) {
+      throw new PointError('Lat is NaN');
+    }
     if (value < -90 || value > 90) {
       throw new PointError('Lat value out of bounds');
     };
@@ -158,6 +179,9 @@ class Point {
 
 
   _checkLngValue(value) {
+    if (isNaN(value)) {
+      throw new PointError('Lng is NaN');
+    }    
     if (value < -180 || value > 180) {
       throw new PointError('Lng value out of bounds');
     }
