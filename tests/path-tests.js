@@ -145,7 +145,7 @@ describe(`Test Path methods`, function() {
     it('should have elev on each point in path', function() {
       const points = coords.map( c => new Point(c));
       const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
+      path.addParam('elev', elevs);
       expect(path).to.satisfy(function(result) { return result._points.every(p => p.hasOwnProperty('_elev'))  } ); 
     });
 
@@ -153,8 +153,8 @@ describe(`Test Path methods`, function() {
     it('param name can have spaces', function() {
       const points = coords.map( c => new Point(c));
       const path = new Path(points);
-      path.addParamToPoints('elev', elevs);      
-      path.addParamToPoints('elev gain', elevs);
+      path.addParam('elev', elevs);      
+      path.addParam('elev gain', elevs);
       expect(path).to.satisfy(function(result) { return result._points.every(p => p.hasOwnProperty('_elev gain'))  } ); 
     });
 
@@ -162,9 +162,9 @@ describe(`Test Path methods`, function() {
     it('should ignore attempt to add duplicate parameter', function() {
       const points = coords.map( c => new Point(c));
       const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
-      path.addParamToPoints('elev', elevs.map(e => e*2));
-      expect(path.getParamFromPoints('elev')).to.deep.equal(elevs);
+      path.addParam('elev', elevs);
+      path.addParam('elev', elevs.map(e => e*2));
+      expect(path.getParam('elev')).to.deep.equal(elevs);
     });
     
     
@@ -173,7 +173,7 @@ describe(`Test Path methods`, function() {
       const path = new Path(points);
       const newElevs = [...elevs, 1,2,3];
       try {
-        path.addParamToPoints('elev', newElevs);
+        path.addParam('elev', newElevs);
       } catch (err) {
         expect(err).to.satisfy(function(r) { return r instanceof PathError});
       }
@@ -188,8 +188,8 @@ describe(`Test Path methods`, function() {
     it('should have elev on each point in path', function() {
       const points = coords.map( c => new Point(c));
       const newpath = new Path(points);
-      newpath.addParamToPoints('elev', elevs);
-      newpath.deleteParamFromPoints('elev');
+      newpath.addParam('elev', elevs);
+      newpath.deleteParam('elev');
       expect(newpath).to.satisfy(function(result) { return result._points.every(p => !p.hasOwnProperty('_elev'))  } ); 
     });
 
@@ -201,15 +201,15 @@ describe(`Test Path methods`, function() {
     it('should have elev on each point in path', function() {
       const points = coords.map( c => new Point(c));
       const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
-      expect(path.getParamFromPoints('elev')).to.deep.equal(elevs);
+      path.addParam('elev', elevs);
+      expect(path.getParam('elev')).to.deep.equal(elevs);
     });
 
     it('should return undefined if param does not exist', function() {
       const points = coords.map( c => new Point(c));
       const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
-      expect(path.getParamFromPoints('beer')).to.equal(undefined);
+      path.addParam('elev', elevs);
+      expect(path.getParam('beer')).to.equal(undefined);
     });
 
 
@@ -221,7 +221,7 @@ describe(`Test Path methods`, function() {
         new Point({"lat":51.21919,"lng":-3.94989,"beer": 'peroni'}),
         new Point({"lat":51.21905,"lng":-3.95032,"beer": 'peroni'})
       ]);
-      expect(newPath.getParamFromPoints('beer')).to.deep.equal(['peroni', null, 'peroni', 'peroni']);
+      expect(newPath.getParam('beer')).to.deep.equal(['peroni', null, 'peroni', 'peroni']);
     });
 
   })
@@ -233,13 +233,13 @@ describe(`Test Path methods`, function() {
 
     it('get a point from path should return requested point', function() {
       const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
+      path.addParam('elev', elevs);
       expect(path.getPoint(5)).to.deep.equal(points[5]);
     });
 
     it(`should throw \'Requested point at index 50 does not exist\' if attempt to access noexistant point`, function() {
       const path = new Path(points);
-      path.addParamToPoints('elev', elevs);
+      path.addParam('elev', elevs);
       const func = () => path.getPoint(50);
       expect(func.bind(func)).to.throw(`Requested point at index 50 does not exist`);
     })
@@ -295,31 +295,31 @@ describe(`Test getters`, function() {
 
   it('get lngLats should produce the expected result', function() {
     const path = new Path(points);
-    path.addParamToPoints('elev', elevs);
+    path.addParam('elev', elevs);
     expect(path.lngLats).to.deep.equal(points.map(p=>[p.lng, p.lat]));
   });
 
   it('get pointLikes should produce the expected result', function() {
     const path = new Path(points);
-    path.addParamToPoints('elev', elevs);
+    path.addParam('elev', elevs);
     expect(path.pointLikes).to.deep.equal(coords);
   });
 
   it('get length should produce the expected result', function() {
     const path = new Path(points);
-    path.addParamToPoints('elev', elevs);
+    path.addParam('elev', elevs);
     expect(path.length).to.deep.equal(points.length);
   });
 
   it('get bbox should produce the expected result', function() {
     const path = new Path(points);
-    path.addParamToPoints('elev', elevs);
+    path.addParam('elev', elevs);
     expect(path.boundingBox).to.deep.equal({ minLng: -3.95615, maxLng: -3.94915, minLat: 51.21769, maxLat: 51.2194})
   });
 
   it('get total Distance should produce the expected result', function() {
     const path = new Path(points);
-    path.addParamToPoints('elev', elevs);
+    path.addParam('elev', elevs);
     const expectedDistance = points.reduce( (d, _, i) => i === 0 ? 0 : d + compareFuncs.p2p(points[i] , points[i-1]), 0);
     expect(path.distance.toFixed(4)).to.equal(expectedDistance.toFixed(4));
   });

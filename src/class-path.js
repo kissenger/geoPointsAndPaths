@@ -68,18 +68,18 @@ class Path{
    * Public class methods
    */
 
-  addParamToPoints(paramName, valueArray) {
+  addParam(paramName, valueArray) {
     this._checkParamArrayLength(valueArray);
     this._points.forEach( (point, i) => point.addParams({[paramName]: valueArray[i]}) );
   }
 
 
-  deleteParamFromPoints(paramName) {
+  deleteParam(paramName) {
     this._points.forEach( (point, i) => point.deleteParams(paramName) );
   }
 
 
-  getParamFromPoints(paramName) {
+  getParam(paramName) {
     if (this.isParamExistsOnAnyPoint(paramName)) {
       return this._points.map( point => {
         if (point.paramExists(paramName)) {
