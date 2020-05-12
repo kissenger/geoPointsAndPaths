@@ -19,8 +19,15 @@ class Point {
    */
   constructor(params) {
     if (params) {
-      this._checkForValidLatAndLng(params);
-      this.addParams(params);
+      if (params instanceof Array) {
+        this._checkValidLngLatArray(params);
+        this._lat = params[1];        
+        this._lng = params[0];
+      } else {
+        this._checkValidKeyValueObject(params);
+        this.addParams(params);
+      }
+
     }
   }
 
@@ -53,7 +60,7 @@ class Point {
 
 
   set lngLat(value) {
-    this._checkLngLatArray(value)
+    this._checkValidLngLatArray(value)
     this._lng = value[0];
     this._lat = value[1];
   }
@@ -125,7 +132,7 @@ class Point {
      }
   }
 
-  _checkLngLatArray(thing) {
+  _checkValidLngLatArray(thing) {
     if ( !(thing instanceof Array)) {
       throw new PointError('lnglat needs to be an array');
     }
@@ -145,7 +152,7 @@ class Point {
   }
 
    
-  _checkForValidLatAndLng(params) {
+  _checkValidKeyValueObject(params) {
     const keys = Object.keys(params);
     this._checkForLngKey(keys);
     this._checkForLatKey(keys);

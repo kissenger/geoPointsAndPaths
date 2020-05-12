@@ -5,7 +5,6 @@
 
 const expect = require('chai').expect;
 const Point = require('../src/class-point').Point;
-const PointError = require('../src/class-point').PointError;
 
 // some param strings for reference
 // {"lat":51.2194,"lng":-3.94915}
@@ -18,7 +17,7 @@ describe(`Correctly instantiating Point`, function() {
 
   describe(`Using param array with only lng/lat keys`, function() {
 
-    point = new Point({"lat":51.2194,"lng":-3.94915});
+    const point = new Point({"lat":51.2194,"lng":-3.94915});
 
     it('should return an instance of Point', function() {
       expect(point).to.satisfy(function(r) { return r instanceof Point});
@@ -39,6 +38,39 @@ describe(`Correctly instantiating Point`, function() {
     it('should not throw error if instantiated with number-like string', function() {
       expect(new Point({"lat":"51.2194","lng":'-3.94915'})).to.satisfy(function(r) { return r instanceof Point});
     });
+
+  })
+
+  describe(`Using lngLat array`, function() {
+
+    const point = new Point([-3.94915, 51.2194]);
+
+    it('should return an instance of Point', function() {
+      expect(point).to.satisfy(function(r) { return r instanceof Point});
+    });
+
+    it('should have keys \'lat\' and \'lng\' only', function() {
+      console.log(point)
+      expect(Object.keys(point).map(key => key.substring(1))).deep.equal(['lat', 'lng']);
+    });
+
+    it('should have lat = 51.2194', function() {
+      expect(point.lat).equal(51.2194);
+    });
+
+    it('should have lng = -3.94915', function() {
+      expect(point.lng).equal(-3.94915);
+    });
+  
+    it('should not throw error if instantiated with number-like string', function() {
+      expect(new Point(['-3.94915', '51.2194'])).to.satisfy(function(r) { return r instanceof Point});
+    });
+
+    it('should throw an error if array is not valid', function() {
+      const func = () => new Point([-3.94915]);
+      expect(func.bind(func)).to.throw('lnglat needs to be an array of length 2');
+    });
+
 
   })
 
@@ -106,7 +138,7 @@ describe(`Correctly instantiating Point`, function() {
 
     it('should throw error if empty array is passed', function() {
       const func = () => new Point([]);
-      expect(func.bind(func)).to.throw('Lng parameter missing');
+      expect(func.bind(func)).to.throw('lnglat needs to be an array of length 2');
     });
 
     it('should throw error if empty object is passed', function() {
