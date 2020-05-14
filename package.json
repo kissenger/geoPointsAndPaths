@@ -29,10 +29,8 @@
   ],
   "author": "Gordon Taylor",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^7.1.2"
-  },
-  "devDependencies": {
   }
 }
