@@ -86,7 +86,7 @@ class Point {
 
   /**
    * Delete a named parameter from Point instance.  Ignore without error if key does not exist.
-   * Accepts an array or lit of keys to delete eg 'elev', 'HR' or ['elev', 'HR'] are acceptable
+   * Accepts an array or list of keys to delete eg 'elev', 'HR' or ['elev', 'HR'] are acceptable
    */
   deleteParams() {
     const args = arguments[0] instanceof Array ? arguments[0] : [...arguments];
