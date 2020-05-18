@@ -1,6 +1,7 @@
 
 const geoFunctions = require('../index').geoFunctions;
 const Point = require('../index').Point;
+const data = require('./data');
 
 // all geoFunctions will take Points or Point-like objects
 const p1 = new Point({"lat":51.2194,"lng":-3.94915});
@@ -26,29 +27,8 @@ const box = {minLat: 51, maxLat: 52, minLng: -1, maxLng: 0};
 console.log(geoFunctions.isPointInBox({lat: 50.9999, lng: -0.5}, box));   //false
 console.log(geoFunctions.isPointInBox({lat: 51.5001, lng: -0.5}, box));   //true
 
-// simplify path
-const coords = [
-  {"lat":51.2194,"lng":-3.94915},
-  {"lat":51.21932,"lng":-3.94935},
-  {"lat":51.21919,"lng":-3.94989},
-  {"lat":51.21905,"lng":-3.95032},
-  {"lat":51.219,"lng":-3.95043},
-  {"lat":51.21893,"lng":-3.95052},
-  {"lat":51.21856,"lng":-3.95088},
-  {"lat":51.21835,"lng":-3.95112},
-  {"lat":51.21825,"lng":-3.95132},
-  {"lat":51.21819,"lng":-3.95147},
-  {"lat":51.21804,"lng":-3.95236},
-  {"lat":51.21804,"lng":-3.95255},
-  {"lat":51.21808,"lng":-3.953},
-  {"lat":51.2181,"lng":-3.95338},
-  {"lat":51.21808,"lng":-3.95372},
-  {"lat":51.21795,"lng":-3.95445},
-  {"lat":51.21794,"lng":-3.95477},
-  {"lat":51.2179,"lng":-3.95511},
-  {"lat":51.21774,"lng":-3.95564},
-  {"lat":51.21769,"lng":-3.95615} 
-];
+const coords = data.coords;
+// console.log(coords);
 console.log(geoFunctions.simplifyPath(coords, 5));
 // [
 //   { lat: 51.2194, lng: -3.94915 },
