@@ -215,12 +215,12 @@ describe(`Test functions`, function() {
       expect(geoFun.bearingAsCardinal(0)).to.deep.equal({from: 'South', to: 'North'})
     });
 
-    it('provides NW to SE output for 2.32157rads', function() {
-      expect(geoFun.bearingAsCardinal(2.32157)).to.deep.equal({from: 'NW', to: 'SE'})
+    it('provides NW to SE output for 133degs', function() {
+      expect(geoFun.bearingAsCardinal(133)).to.deep.equal({from: 'NW', to: 'SE'})
     });
 
     it('should throw error \'bearingAsCardinal will only accept input beween 0 and 2*PI\' if bearing is out of range', function() {
-      expect(geoFun.bearingAsCardinal.bind(geoFun.bearingAsCardinal, 390)).to.throw('bearingAsCardinal will only accept input beween 0 and 2*PI');
+      expect(geoFun.bearingAsCardinal.bind(geoFun.bearingAsCardinal, 390)).to.throw('bearingAsCardinal will only accept input beween 0 and 360');
     });
 
   })    

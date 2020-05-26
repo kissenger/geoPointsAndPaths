@@ -87,15 +87,15 @@ function bearing(p1, p2) {
  * @returns 
  */
 function bearingAsCardinal(rads) {
-  if ((rads > 5.890 && rads <= 6.284) || (rads >= 0 && rads <= 0.393)) { return {from: 'South', to: 'North'}; }
-  if (rads > 0.393 && rads <= 1.178) { return {from: 'SW', to: 'NE'}; }
-  if (rads > 1.178 && rads <= 1.963) { return {from: 'West', to: 'East'}; }
-  if (rads > 1.963 && rads <= 2.749) { return {from: 'NW', to: 'SE'}; }
-  if (rads > 2.749 && rads <= 3.534) { return {from: 'North', to: 'South'}; }
-  if (rads > 3.534 && rads <= 4.320) { return {from: 'NE', to: 'SW'}; } 
-  if (rads > 4.320 && rads <= 5.105) { return {from: 'East', to: 'West'}; }
-  if (rads > 5.105 && rads <= 5.890) { return {from: 'SE', to: 'NW'}; }
-  throw new GeoFunctionsError('bearingAsCardinal will only accept input beween 0 and 2*PI');
+  if ((rads > 337.5 && rads <= 360) || (rads >= 0 && rads <= 22.5)) { return {from: 'South', to: 'North'}; }
+  if (rads > 22.5 && rads <= 67.5) { return {from: 'SW', to: 'NE'}; }
+  if (rads > 67.5 && rads <= 112.5) { return {from: 'West', to: 'East'}; }
+  if (rads > 112.5 && rads <= 157.5) { return {from: 'NW', to: 'SE'}; }
+  if (rads > 157.5 && rads <= 202.5) { return {from: 'North', to: 'South'}; }
+  if (rads > 202.5 && rads <= 247.5) { return {from: 'NE', to: 'SW'}; } 
+  if (rads > 247.5 && rads <= 292.5) { return {from: 'East', to: 'West'}; }
+  if (rads > 292.5 && rads <= 337.5) { return {from: 'SE', to: 'NW'}; }
+  throw new GeoFunctionsError('bearingAsCardinal will only accept input beween 0 and 360');
 }
 
 
