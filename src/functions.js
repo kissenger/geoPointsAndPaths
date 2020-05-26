@@ -56,8 +56,8 @@ function p2l(p1, p2, p3) {
 
 
 /**
- * Returns bearing in radians between two points
- * TODO: returns 0 (ie North) is two identical points are entered - does this case need to be handled?* 
+ * Returns bearing in DEGREES between two points (breaking change at v2.0.0)
+ * TODO: returns 0 (ie North) if two identical points are entered - does this case need to be handled?* 
  * @param {Point} p1 start point as Point or Point-like
  * @param {Point} p2 end point as Point or Point-like
  * @returns {number} bearing in RADIANS between two points 
@@ -73,9 +73,10 @@ function bearing(p1, p2) {
   const lng2 = degs2rads(p2.lng);
 
 	const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2)* Math.cos(lng2 - lng1)
-	const y = Math.sin(lng2 - lng1) * Math.cos(lat2)
+  const y = Math.sin(lng2 - lng1) * Math.cos(lat2)
+  const brg = Math.atan2(y, x);
 
-	return Math.atan2(y, x)
+	return (brg * 180 / Math.PI + 360) % 360;
 
 }
 

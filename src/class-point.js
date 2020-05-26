@@ -197,7 +197,7 @@ class Point {
 
 
   _keyIsLatOrLng(key) {
-    return key === 'lat' || key === 'lng';
+    return key === 'lat' || key === 'lng' || key === 'lon';
   }
 
 
