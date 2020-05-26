@@ -47,8 +47,8 @@ function p2l(p1, p2, p3) {
   checkPoints(p1, p2, p3);
 
   const d13 = p2p(p1, p3) / 1000.0;
-  const brg12 = bearing(p1, p2);
-  const brg13 = bearing(p1, p3);
+  const brg12 = degs2rads( bearing(p1, p2) );
+  const brg13 = degs2rads( bearing(p1, p3) );;
 
   return Math.asin( Math.sin( d13/6378.137 ) * Math.sin( brg13-brg12 ) ) * 6378.137 * 1000.0;
 
@@ -72,10 +72,11 @@ function bearing(p1, p2) {
   const lng1 = degs2rads(p1.lng);
   const lng2 = degs2rads(p2.lng);
 
-	const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2)* Math.cos(lng2 - lng1)
-	const y = Math.sin(lng2 - lng1) * Math.cos(lat2)
+	const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2)* Math.cos(lng2 - lng1);
+  const y = Math.sin(lng2 - lng1) * Math.cos(lat2);
+  const brng = Math.atan2(y, x);
 
-	return Math.atan2(y, x)
+	return (brng * 180 / Math.PI + 360) % 360; 
 
 }
 

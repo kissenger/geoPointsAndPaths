@@ -20,7 +20,7 @@ GeoFunctions:
 <ul>
   <li> p2p: point to point distance between two provdied points </li>
   <li> p2l: shortest distance from great circle line connecting two points, to a third point</li>
-  <li> bearing: compass bearing between two provided points </li>
+  <li> bearing: compass bearing between two provided points (in degrees - new at v2.0.0, breaking change)</li>
   <li> boundingBox: return lat and lng bounds for a supplied array of points </li>
   <li> bearingAsCardinal: compass bearing between two provided points as compass cardinal, eg North to South</li>
   <li> simplify: simplifies an array of points given a tolerance using the perpendicular distance method</li>
@@ -208,9 +208,8 @@ console.log(geoFunctions.p2l(p1, p3, p2));  // -20.105464375742027
 
 Bearing between two points: 
 <pre>
-const bearingInRADS = geoFunctions.bearing(p1, p3)
-console.log(bearingInRADS);                          // -0.31198169868786196 in RADIANS
-console.log(geoFunctions.rads2degs(bearingInRADS));  // -17.875234620136624 in DEGREES
+const bearingInDEGS = geoFunctions.bearing(p1, p3)
+console.log(bearingInDEGS);                          // 342.1247653798634
 </pre>
 
 Bearing between two points and compass cardinal (input in RADIANS):

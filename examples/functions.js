@@ -12,9 +12,8 @@ const p3 = new Point({"lat":51.2392,"lng":-3.95935});
 console.log(geoFunctions.p2p(p1, p2));      // 26.270488219732563
 console.log(geoFunctions.p2l(p1, p3, p2));  // -20.105464375742027
 
-const bearingInRADS = geoFunctions.bearing(p1, p3)
-console.log(bearingInRADS);                          // -0.31198169868786196 in RADIANS
-console.log(geoFunctions.rads2degs(bearingInRADS));  // -17.875234620136624 in DEGREES
+const bearingInDEGS = geoFunctions.bearing(p1, p3)
+console.log(bearingInDEGS);                          // 342.1247653798634
 
 console.log(geoFunctions.rads2degs(3.14159));        // 179.9998479605043
 console.log(geoFunctions.degs2rads(180));            // 3.141592653589793
